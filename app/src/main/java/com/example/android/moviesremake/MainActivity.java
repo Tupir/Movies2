@@ -24,6 +24,9 @@ import android.widget.Toast;
 import java.net.URL;
 import java.util.ArrayList;
 
+
+// maybe add async task to another class?
+
 public class MainActivity extends AppCompatActivity implements
         MovieAdapter.ForecastAdapterOnClickHandler,     // recycler view click handler
         LoaderManager.LoaderCallbacks<ArrayList<Movie>>,    // asynctask

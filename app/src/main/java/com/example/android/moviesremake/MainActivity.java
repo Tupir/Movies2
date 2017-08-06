@@ -17,6 +17,9 @@ import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.android.moviesremake.settings.SettingsActivity;
+import com.example.android.moviesremake.utils.Movie;
+
 public class MainActivity extends AppCompatActivity implements
         MovieAdapter.ForecastAdapterOnClickHandler,     // recycler view click handler
 //        LoaderManager.LoaderCallbacks<ArrayList<Movie>>,    // AsyncTask

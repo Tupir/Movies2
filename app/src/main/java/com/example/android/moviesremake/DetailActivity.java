@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.moviesremake.utils.Movie;
 import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;

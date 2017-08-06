@@ -1,4 +1,4 @@
-package com.example.android.moviesremake;
+package com.example.android.moviesremake.utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;

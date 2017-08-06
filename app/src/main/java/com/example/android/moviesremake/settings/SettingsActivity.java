@@ -1,8 +1,10 @@
-package com.example.android.moviesremake;
+package com.example.android.moviesremake.settings;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+
+import com.example.android.moviesremake.R;
 
 public class SettingsActivity extends AppCompatActivity {
 

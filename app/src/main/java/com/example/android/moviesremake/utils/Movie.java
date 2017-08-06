@@ -1,4 +1,4 @@
-package com.example.android.moviesremake;
+package com.example.android.moviesremake.utils;
 
 import android.os.Parcel;
 import android.os.Parcelable;

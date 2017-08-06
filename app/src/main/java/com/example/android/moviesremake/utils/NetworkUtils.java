@@ -1,9 +1,11 @@
-package com.example.android.moviesremake;
+package com.example.android.moviesremake.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.v7.preference.PreferenceManager;
+
+import com.example.android.moviesremake.R;
 
 import java.io.IOException;
 import java.io.InputStream;

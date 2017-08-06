@@ -7,6 +7,10 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.view.View;
 
+import com.example.android.moviesremake.utils.Movie;
+import com.example.android.moviesremake.utils.MovieJsonParser;
+import com.example.android.moviesremake.utils.NetworkUtils;
+
 import java.net.URL;
 import java.util.ArrayList;
 

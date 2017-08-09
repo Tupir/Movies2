@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.android.moviesremake.utils.Movie;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -104,16 +105,21 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Foreca
 
         mCursor.moveToPosition(position);
 
-        byte[] bajt = mCursor.getBlob(FavoriteActivity.INDEX_MOVIE_IMAGE);
-        Bitmap bitmap = getBitmap(bajt);
-
-
+//        byte[] bajt = mCursor.getBlob(FavoriteActivity.INDEX_MOVIE_IMAGE);
+//        Bitmap bitmap = getBitmap(bajt);
 
         Picasso.with(context)
-                .load(getImageUri(context, bitmap))
+                .load("http://image.tmdb.org/t/p/w185//tWqifoYuwLETmmasnGHO7xBjEtt.jpg")
                 .placeholder(R.drawable.no_image)
+                .networkPolicy(NetworkPolicy.OFFLINE)
                 .error(R.drawable.no_image)
                 .into(forecastAdapterViewHolder.obrazek);
+
+//        Picasso.with(context)
+//                .load(getImageUri(context, bitmap))
+//                .placeholder(R.drawable.no_image)
+//                .error(R.drawable.no_image)
+//                .into(forecastAdapterViewHolder.obrazek);
 
     }
 

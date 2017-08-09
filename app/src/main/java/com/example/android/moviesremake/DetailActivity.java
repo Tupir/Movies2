@@ -1,5 +1,6 @@
 package com.example.android.moviesremake;
 
+import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -109,13 +110,12 @@ public class DetailActivity extends AppCompatActivity {
 
         Intent chooser = Intent.createChooser(intent, title);
 
-//        try {
-//            this.startActivity(chooser);
-//        } catch (ActivityNotFoundException ex) {
+        try {
+            this.startActivity(chooser);
+        } catch (ActivityNotFoundException ex) {
             intent.setPackage("com.android.chrome");
             this.startActivity(chooser);
-//        }
-//
+        }
 
 
     }

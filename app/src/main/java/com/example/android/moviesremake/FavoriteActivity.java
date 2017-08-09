@@ -20,7 +20,6 @@ import android.widget.ProgressBar;
 
 import com.example.android.moviesremake.data.MovieDbHelper;
 import com.example.android.moviesremake.data.MovieTableContents;
-import com.example.android.moviesremake.utils.Movie;
 
 public class FavoriteActivity extends AppCompatActivity implements
         FavoriteAdapter.ForecastAdapterOnClickHandler,    // recycler view click handler
@@ -35,10 +34,6 @@ public class FavoriteActivity extends AppCompatActivity implements
      */
     public static final String[] MAIN_FORECAST_PROJECTION = {
             MovieTableContents.MovieEntry.COLUMN_IMAGE,
-            MovieTableContents.MovieEntry.COLUMN_OVERVIEW,
-            MovieTableContents.MovieEntry.COLUMN_RELEASE,
-            MovieTableContents.MovieEntry.COLUMN_TITLE,
-            MovieTableContents.MovieEntry.COLUMN_VOTE,
     };
 
     //  COMPLETED (17) Create constant int values representing each column name's position above
@@ -48,10 +43,6 @@ public class FavoriteActivity extends AppCompatActivity implements
      * must be adjusted to match the order of the Strings.
      */
     public static final int INDEX_MOVIE_IMAGE = 0;
-    public static final int INDEX_MOVIE_MAX_OVERVIEW = 1;
-    public static final int INDEX_MOVIE_RELEASE = 2;
-    public static final int INDEX_MOVIE_TITLE = 3;
-    public static final int INDEX_MOVIE_VOTE = 4;
 
 
 
@@ -119,13 +110,12 @@ public class FavoriteActivity extends AppCompatActivity implements
      * Urcuje, co sa ma stat po stlaceni na konkretny view
      */
     @Override
-    public void onClick(Movie weatherForDay) {
+    public void onClick(String image) {
         Context context = this;
-        Intent intentToStartDetailActivity = new Intent(context, DetailActivity.class);
+        Intent intentToStartDetailActivity = new Intent(context, FavoriteDetailActivity.class);
 
-        Uri uriForDataClicked = MovieTableContents.MovieEntry.CONTENT_URI;
-
-        intentToStartDetailActivity.setData(uriForDataClicked);
+        Uri forMovieClicked = MovieTableContents.MovieEntry.buildOneMovieUri(image);
+        intentToStartDetailActivity.setData(forMovieClicked);
         startActivity(intentToStartDetailActivity);
     }
 

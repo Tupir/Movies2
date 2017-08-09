@@ -47,6 +47,13 @@ public class MovieTableContents {
         public static final String COLUMN_VOTE = "vote";
 
         public static final String COLUMN_RELEASE = "release";
+
+
+        public static Uri buildOneMovieUri(String image) {
+            return CONTENT_URI.buildUpon()
+                    .appendPath(image)
+                    .build();
+        }
         
 
 

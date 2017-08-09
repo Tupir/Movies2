@@ -3,8 +3,6 @@ package com.example.android.moviesremake;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -18,14 +16,8 @@ import com.example.android.moviesremake.data.MovieTableContents;
 import com.example.android.moviesremake.utils.Movie;
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
-
-import static com.example.android.moviesremake.utils.HelperClass.getBytes;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -73,25 +65,16 @@ public class DetailActivity extends AppCompatActivity {
     public void addMovieToDatabase(View view){
         ContentValues cv = new ContentValues();
 
-
-        URL imageurl = null;
-        Bitmap bitmap = null;
-        try {
-            imageurl = new URL(mForecast.getImage());
-            bitmap = BitmapFactory.decodeStream(imageurl.openConnection().getInputStream());
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        byte[] image = getBytes(bitmap);
-
-        cv.put(MovieTableContents.MovieEntry.COLUMN_IMAGE, image);
+        cv.put(MovieTableContents.MovieEntry.COLUMN_IMAGE, mForecast.getImage());
         cv.put(MovieTableContents.MovieEntry.COLUMN_TITLE, mForecast.getTitle());
         cv.put(MovieTableContents.MovieEntry.COLUMN_RELEASE, mForecast.getRelease());
         cv.put(MovieTableContents.MovieEntry.COLUMN_VOTE, mForecast.getVote());
         cv.put(MovieTableContents.MovieEntry.COLUMN_OVERVIEW, mForecast.getOverview());
+
+        // check if exists
+//        Uri forMovieClicked = MovieTableContents.MovieEntry.buildOneMovieUri(mForecast.getImage());
+//        query?
+        // vytvor funkciu v MovieProvider, getColumntIndex == -1
 
         this.getContentResolver().insert(
                 MovieTableContents.MovieEntry.CONTENT_URI,

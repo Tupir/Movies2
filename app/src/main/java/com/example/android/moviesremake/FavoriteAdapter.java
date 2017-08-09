@@ -7,7 +7,6 @@ package com.example.android.moviesremake;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,9 +18,6 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-
-import static com.example.android.moviesremake.utils.HelperClass.getBitmap;
-import static com.example.android.moviesremake.utils.HelperClass.getImageUri;
 
 
 public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ForecastAdapterViewHolder> {
@@ -36,7 +32,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Foreca
      * Rozhranie, ktore urcuje, co sa vykona po kliknuti na konkretny view
      */
     public interface ForecastAdapterOnClickHandler {
-        void onClick(Movie weatherForDay);
+        void onClick(String image);
     }
 
     public FavoriteAdapter(Context context, ForecastAdapterOnClickHandler clickHandler) {
@@ -64,9 +60,8 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Foreca
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
             mCursor.moveToPosition(adapterPosition);
-            //Movie movie = moviesData.get(adapterPosition);
-            //Movie movie = mCursor.get
-            //mClickHandler.onClick(movie);
+            String image = mCursor.getString(FavoriteActivity.INDEX_MOVIE_IMAGE);
+            mClickHandler.onClick(image);
         }
     }
 
@@ -105,21 +100,14 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Foreca
 
         mCursor.moveToPosition(position);
 
-//        byte[] bajt = mCursor.getBlob(FavoriteActivity.INDEX_MOVIE_IMAGE);
-//        Bitmap bitmap = getBitmap(bajt);
+        String str = mCursor.getString(FavoriteActivity.INDEX_MOVIE_IMAGE);
 
         Picasso.with(context)
-                .load("http://image.tmdb.org/t/p/w185//tWqifoYuwLETmmasnGHO7xBjEtt.jpg")
+                .load(str)
                 .placeholder(R.drawable.no_image)
                 .networkPolicy(NetworkPolicy.OFFLINE)
                 .error(R.drawable.no_image)
                 .into(forecastAdapterViewHolder.obrazek);
-
-//        Picasso.with(context)
-//                .load(getImageUri(context, bitmap))
-//                .placeholder(R.drawable.no_image)
-//                .error(R.drawable.no_image)
-//                .into(forecastAdapterViewHolder.obrazek);
 
     }
 

@@ -45,6 +45,7 @@ public class MovieProvider extends ContentProvider {
      * ourselves, such as using regular expressions.
      */
     public static final int CODE_MOVIE = 100;
+    public static final int CODE_ONE_MOVIE = 101;
 
 //  Instantiate a static UriMatcher using the buildUriMatcher method
     /*
@@ -93,6 +94,7 @@ public class MovieProvider extends ContentProvider {
         matcher.addURI(authority, MovieTableContents.PATH_MOVIE, CODE_MOVIE);
 
         // create more matchers if you need mroe query (for example print each row)
+        matcher.addURI(authority, MovieTableContents.PATH_MOVIE + "/*", CODE_ONE_MOVIE);
 
         return matcher;
     }
@@ -165,31 +167,44 @@ public class MovieProvider extends ContentProvider {
 
         Cursor cursor;
 
-        /*
-         * Here's the switch statement that, given a URI, will determine what kind of request is
-         * being made and query the database accordingly.
-         */
+        switch (sUriMatcher.match(uri)) {
 
-            /*
-             * When sUriMatcher's match method is called with a URI that looks EXACTLY like this
-             *
-             *      content://com.example.android.sunshine/weather/
-             *
-             * sUriMatcher's match method will return the code that indicates to us that we need
-             * to return all of the weather in our weather table.
-             *
-             * In this case, we want to return a cursor that contains every row of weather data
-             * in our weather table.
-             */
+            case CODE_MOVIE: {
+                cursor = mOpenHelper.getReadableDatabase().query(
+                        TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            }
 
-        cursor = mOpenHelper.getReadableDatabase().query(
-                TABLE_NAME,
-                projection,
-                selection,
-                selectionArgs,
-                null,
-                null,
-                sortOrder);
+
+            case CODE_ONE_MOVIE: {
+
+                String normalizedUtcDateString = uri.getLastPathSegment();
+                String[] selectionArguments = new String[]{normalizedUtcDateString};
+
+                cursor = mOpenHelper.getReadableDatabase().query(
+                        MovieTableContents.MovieEntry.TABLE_NAME,
+                        projection,
+                        MovieTableContents.MovieEntry.COLUMN_IMAGE + " = ? ",
+                        selectionArguments,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            }
+
+
+
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+
+
 
 //      Call setNotificationUri on the cursor and then return the cursor
         cursor.setNotificationUri(getContext().getContentResolver(), uri);

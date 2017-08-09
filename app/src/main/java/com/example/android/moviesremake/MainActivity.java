@@ -1,11 +1,15 @@
 package com.example.android.moviesremake;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
@@ -25,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements
 //        LoaderManager.LoaderCallbacks<ArrayList<Movie>>,    // AsyncTask
         SharedPreferences.OnSharedPreferenceChangeListener{     // settings change
 
+    private static final String TAG = MainActivity.class.getSimpleName();
     private MovieAdapter mAdapter;
     private RecyclerView recycler;
     public static ProgressBar mLoadingIndicator;
@@ -42,6 +47,10 @@ public class MainActivity extends AppCompatActivity implements
         // if there is no connection
         if(!isNetworkAvailable()){
             Toast.makeText(getApplicationContext(), "Connection not available", Toast.LENGTH_SHORT).show();
+        }
+
+        if(!isStoragePermissionGranted()){
+            System.out.println("NEMAS PRAVA");
         }
 
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);  // loader
@@ -75,6 +84,40 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+
+
+    /**
+    ask for permissions
+
+     */
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG,"Permission is granted");
+                return true;
+            } else {
+
+                Log.v(TAG,"Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG,"Permission is granted");
+            return true;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
     /**
      * Override metoda z rozhrania, ktore sa nachadza v Adapteri
      * Urcuje, co sa ma stat po stlaceni na konkretny view
@@ -100,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        Intent intent;
 
         if (id == R.id.action_refresh) {
             //need to set adapter for null and call LoaderManager again
@@ -109,8 +153,14 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         if (id == R.id.action_settings) {
-            Intent startSettingsActivity = new Intent(this, SettingsActivity.class);
-            startActivity(startSettingsActivity);
+            intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
+        if (id == R.id.action_favorite) {
+            intent = new Intent(this, FavoriteActivity.class);
+            startActivity(intent);
             return true;
         }
 

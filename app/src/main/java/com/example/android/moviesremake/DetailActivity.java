@@ -1,18 +1,30 @@
 package com.example.android.moviesremake;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.moviesremake.data.MovieTableContents;
 import com.example.android.moviesremake.utils.Movie;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
+
+import static com.example.android.moviesremake.utils.HelperClass.getBytes;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -56,5 +68,56 @@ public class DetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    public void addMovieToDatabase(View view){
+        ContentValues cv = new ContentValues();
+
+
+        URL imageurl = null;
+        Bitmap bitmap = null;
+        try {
+            imageurl = new URL(mForecast.getImage());
+            bitmap = BitmapFactory.decodeStream(imageurl.openConnection().getInputStream());
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        byte[] image = getBytes(bitmap);
+
+        cv.put(MovieTableContents.MovieEntry.COLUMN_IMAGE, image);
+        cv.put(MovieTableContents.MovieEntry.COLUMN_TITLE, mForecast.getTitle());
+        cv.put(MovieTableContents.MovieEntry.COLUMN_RELEASE, mForecast.getRelease());
+        cv.put(MovieTableContents.MovieEntry.COLUMN_VOTE, mForecast.getVote());
+        cv.put(MovieTableContents.MovieEntry.COLUMN_OVERVIEW, mForecast.getOverview());
+
+        this.getContentResolver().insert(
+                MovieTableContents.MovieEntry.CONTENT_URI,
+                cv);
+    }
+
+    public void testingButton(View view){
+
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("https://www.youtube.com/watch?v=xw-QIZZwDBg"));
+
+        // Always use string resources for UI text. This says something like "Share this photo with"
+        String title = (String) getResources().getText(R.string.chooser_title);
+        // Create and start the chooser
+
+        Intent chooser = Intent.createChooser(intent, title);
+
+//        try {
+//            this.startActivity(chooser);
+//        } catch (ActivityNotFoundException ex) {
+            intent.setPackage("com.android.chrome");
+            this.startActivity(chooser);
+//        }
+//
+
+
+    }
 
 }

@@ -11,6 +11,7 @@ import android.os.Parcelable;
 public class Movie implements Parcelable{
 
     private String image;
+    private int id;
     private String title;
     private String overview;
     private Double vote;
@@ -20,8 +21,9 @@ public class Movie implements Parcelable{
         super();
     }
 
-    public Movie(String image, String title, String overview, Double vote, String release) {
+    public Movie(String image,int id, String title, String overview, Double vote, String release) {
         this.image = image;
+        this.id = id;
         this.title = title;
         this.overview = overview;
         this.vote = vote;
@@ -34,6 +36,14 @@ public class Movie implements Parcelable{
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -76,6 +86,7 @@ public class Movie implements Parcelable{
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(image);
+        dest.writeInt(id);
         dest.writeString(title);
         dest.writeString(overview);
         dest.writeDouble(vote);
@@ -96,6 +107,7 @@ public class Movie implements Parcelable{
 
     public Movie(Parcel in) {
         image = in.readString();
+        id = in.readInt();
         title = in.readString();
         overview = in.readString();
         vote = in.readDouble();

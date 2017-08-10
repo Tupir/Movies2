@@ -8,6 +8,8 @@ import android.provider.MediaStore;
 
 import java.io.ByteArrayOutputStream;
 
+
+//not used for now
 public class HelperClass {
 
 

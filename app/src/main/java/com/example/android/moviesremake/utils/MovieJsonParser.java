@@ -25,6 +25,7 @@ public class MovieJsonParser {
         final String OWM_OVERVIEW = "overview";
         final String OWM_VOTE = "vote_average";
         final String OWM_RELEASE = "release_date";
+        final String OWM_ID = "id";
 
 
         JSONObject forecastJson = new JSONObject(forecastJsonStr);
@@ -42,6 +43,7 @@ public class MovieJsonParser {
             String overview = movieForecast.getString(OWM_OVERVIEW);
             Double vote = movieForecast.getDouble(OWM_VOTE);
             String release = movieForecast.getString(OWM_RELEASE);
+            int id = movieForecast.getInt(OWM_ID);
 
             String complete_url = "http://image.tmdb.org/t/p/w185/" + pict;
             movie = new Movie();
@@ -50,10 +52,41 @@ public class MovieJsonParser {
             movie.setOverview(overview);
             movie.setVote(vote);
             movie.setRelease(release);
+            movie.setId(id);
             //Log.v("complete url", movie.getImage());
             movies.add(movie);
         }
         return movies;
+    }
+
+
+    public static ArrayList<String> getTrailers(String id)
+            throws JSONException {
+
+        //String url = "http://api.themoviedb.org/3/movie/321612/videos?api_key=c88f3eabe09958ae472c9cd7e20b38aa";
+
+        ArrayList<String> trailers = new ArrayList<>();
+
+        final String OWM_RESULT = "results";
+        final String OWM_KEY = "key";
+
+
+        JSONObject trailerJson = new JSONObject(id);
+
+        // JSONArray ked mas v JSONe znam "["
+        JSONArray weatherArray = trailerJson.getJSONArray(OWM_RESULT);
+        trailers.clear();
+
+        for(int i = 0; i < 2; i++) {
+            // JSONObject ked mas v JSONe znam "{"
+            JSONObject movieForecast = weatherArray.getJSONObject(i);
+            String key = movieForecast.getString(OWM_KEY);
+
+            trailers.add(key);
+            System.out.println(key);
+        }
+
+        return trailers;
     }
 
 

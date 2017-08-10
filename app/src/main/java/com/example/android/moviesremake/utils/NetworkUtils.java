@@ -49,6 +49,24 @@ public class NetworkUtils {
         return url;
     }
 
+    public static URL buildUrlForTrailer(String id) {
+
+        Uri builtUri = Uri.parse(MOVIEDB_BASE_URL).buildUpon()
+                .appendEncodedPath(id.toString()+"/videos")
+                .appendQueryParameter(PARAM_QUERY, PARAM_KEY)
+                .build();
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(url.toString());
+        return url;
+    }
+
     /**
      * This method returns the entire result from the HTTP response.
      * Vrati response zo stranky (cely JSON)

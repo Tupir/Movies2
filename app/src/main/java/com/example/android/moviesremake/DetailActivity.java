@@ -3,23 +3,38 @@ package com.example.android.moviesremake;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.moviesremake.data.MovieTableContents;
 import com.example.android.moviesremake.utils.Movie;
+import com.example.android.moviesremake.utils.MovieJsonParser;
+import com.example.android.moviesremake.utils.NetworkUtils;
 import com.squareup.picasso.Picasso;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class DetailActivity extends AppCompatActivity {
+import static com.example.android.moviesremake.MainActivity.mLoadingIndicator;
+
+public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<String>>{
+
+    private static final int ID_DETAIL_LOADER = 166;
 
     private Movie mForecast;
     @Bind(R.id.overview) TextView textOverview;
@@ -45,6 +60,7 @@ public class DetailActivity extends AppCompatActivity {
             }
         }
 
+        getSupportLoaderManager().initLoader(ID_DETAIL_LOADER, null, this);
 
     }
 
@@ -62,7 +78,7 @@ public class DetailActivity extends AppCompatActivity {
     }
 
 
-    public void addMovieToDatabase(View view){
+    public void insertMovieToDatabase(View view){
         ContentValues cv = new ContentValues();
 
         cv.put(MovieTableContents.MovieEntry.COLUMN_IMAGE, mForecast.getImage());
@@ -71,10 +87,23 @@ public class DetailActivity extends AppCompatActivity {
         cv.put(MovieTableContents.MovieEntry.COLUMN_VOTE, mForecast.getVote());
         cv.put(MovieTableContents.MovieEntry.COLUMN_OVERVIEW, mForecast.getOverview());
 
-        // check if exists
-//        Uri forMovieClicked = MovieTableContents.MovieEntry.buildOneMovieUri(mForecast.getImage());
-//        query?
-        // vytvor funkciu v MovieProvider, getColumntIndex == -1
+        // checl if it's in database already
+        /**
+         * I am working here with getContentResolver, this method calls (query,update,delete,insert)
+         *  functions that are implemented in Provider
+         * getContentResolver calls code by URIs
+         */
+        Cursor cursor = this.getContentResolver().query(MovieTableContents.MovieEntry.CONTENT_URI,
+                null,   //new String[] {"image"}
+                MovieTableContents.MovieEntry.COLUMN_IMAGE + " = ? ",
+                new String[]{mForecast.getImage()},
+                null);
+
+        if(cursor.moveToFirst()) {
+            Toast.makeText(this, "You already marked this movie as favorite!",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
 
         this.getContentResolver().insert(
                 MovieTableContents.MovieEntry.CONTENT_URI,
@@ -103,4 +132,70 @@ public class DetailActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public Loader<ArrayList<String>> onCreateLoader(int id, Bundle args) {
+        return new AsyncTaskLoader<ArrayList<String>>(this) {
+
+            ArrayList<String> trailers = null;
+
+            /**
+             * Subclasses of AsyncTaskLoader must implement this to take care of loading their data.
+             * The same as onPreExecute() v AsyncTask
+             */
+            @Override
+            protected void onStartLoading() {
+                if (trailers != null) {
+                    deliverResult(trailers);
+                } else {
+                    mLoadingIndicator.setVisibility(View.VISIBLE);
+                    forceLoad();
+                }
+            }
+
+            /**
+             * This is the method of the AsyncTaskLoader that will load and parse the JSON data
+             *
+             * @return Movie data as an array of Movies.
+             *         null if an error occurs
+             */
+
+            @Override
+            public ArrayList<String> loadInBackground() {
+
+
+                System.out.println(mForecast.getId());
+
+                URL weatherRequestUrl = NetworkUtils.buildUrlForTrailer(Integer.toString(mForecast.getId()));
+
+                try {
+                    String jsonWeatherResponse = NetworkUtils
+                            .getResponseFromHttpUrl(weatherRequestUrl);
+
+                    return MovieJsonParser.getTrailers(jsonWeatherResponse);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+
+
+            public void deliverResult(ArrayList<String> data) {
+                trailers = data;
+                super.deliverResult(trailers);
+            }
+
+        };
+    }
+
+    @Override
+    public void onLoadFinished(Loader<ArrayList<String>> loader, ArrayList<String> data) {
+        System.out.println(Arrays.toString(data.toArray()));
+    }
+
+    @Override
+    public void onLoaderReset(Loader<ArrayList<String>> loader) {
+
+    }
 }

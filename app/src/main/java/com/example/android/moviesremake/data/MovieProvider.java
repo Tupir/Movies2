@@ -188,7 +188,7 @@ public class MovieProvider extends ContentProvider {
                 String[] selectionArguments = new String[]{normalizedUtcDateString};
 
                 cursor = mOpenHelper.getReadableDatabase().query(
-                        MovieTableContents.MovieEntry.TABLE_NAME,
+                        TABLE_NAME,
                         projection,
                         MovieTableContents.MovieEntry.COLUMN_IMAGE + " = ? ",
                         selectionArguments,

@@ -64,7 +64,7 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="addMovieToDatabase"
+        android:onClick="insertMovieToDatabase"
         android:text="Button"
         android:layout_below="@+id/imageView1"
         android:layout_alignLeft="@+id/vote"
@@ -81,6 +81,14 @@
         android:layout_above="@+id/overview"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
+
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_alignParentTop="true" />
 
 
 </RelativeLayout>

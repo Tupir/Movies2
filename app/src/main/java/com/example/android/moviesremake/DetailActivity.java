@@ -11,6 +11,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.ScrollingMovementMethod;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -26,6 +27,7 @@ import com.squareup.picasso.Picasso;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -37,6 +39,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private static final int ID_DETAIL_LOADER = 166;
 
     private Movie mForecast;
+    List<List<String>> reviews = new ArrayList<>();
     @Bind(R.id.overview) TextView textOverview;
     @Bind(R.id.vote) TextView textVote;
     @Bind(R.id.release) TextView textRelease;
@@ -45,18 +48,20 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
+        setContentView(R.layout.activity_detail_relative);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ButterKnife.bind(this); // before setText
 
         Intent intentThatStartedThisActivity = getIntent();
         if (intentThatStartedThisActivity != null) {
             if (intentThatStartedThisActivity.hasExtra("movies")) {
+                //setTitle(mForecast.getTitle());
                 mForecast = intentThatStartedThisActivity.getParcelableExtra("movies");
                 Picasso.with(this).load(mForecast.getImage()).into(imageView);
                 textRelease.setText(mForecast.getRelease());
-                textVote.setText(mForecast.getVote().toString());
+                textVote.setText(mForecast.getVote()+"/10".toString());
                 textOverview.setText(mForecast.getOverview());
+                textOverview.setMovementMethod(new ScrollingMovementMethod());  // for scrolling
             }
         }
 
@@ -87,8 +92,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         cv.put(MovieTableContents.MovieEntry.COLUMN_VOTE, mForecast.getVote());
         cv.put(MovieTableContents.MovieEntry.COLUMN_OVERVIEW, mForecast.getOverview());
 
-        // checl if it's in database already
         /**
+         * Checking if movie is in database already
          * I am working here with getContentResolver, this method calls (query,update,delete,insert)
          *  functions that are implemented in Provider
          * getContentResolver calls code by URIs
@@ -165,14 +170,21 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
                 System.out.println(mForecast.getId());
 
-                URL weatherRequestUrl = NetworkUtils.buildUrlForTrailer(Integer.toString(mForecast.getId()));
+                URL videos = NetworkUtils.buildUrlForTrailer(Integer.toString(mForecast.getId()), "videos");
+                URL weatherRequestUr2 = NetworkUtils.buildUrlForTrailer(Integer.toString(mForecast.getId()), "reviews");
 
                 try {
-                    String jsonWeatherResponse = NetworkUtils
-                            .getResponseFromHttpUrl(weatherRequestUrl);
+                    String jsonWeatherResponse = NetworkUtils   // JSON for trailer
+                            .getResponseFromHttpUrl(videos);
 
-                    return MovieJsonParser.getTrailers(jsonWeatherResponse);
+                    String jsonWeatherResponse1 = NetworkUtils     // JSON for reviews
+                            .getResponseFromHttpUrl(weatherRequestUr2);
 
+                    reviews = MovieJsonParser.getReviews(jsonWeatherResponse1);
+
+                    trailers = MovieJsonParser.getTrailers(jsonWeatherResponse);
+
+                    return trailers;
                 } catch (Exception e) {
                     e.printStackTrace();
                     return null;
@@ -192,6 +204,9 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public void onLoadFinished(Loader<ArrayList<String>> loader, ArrayList<String> data) {
         System.out.println(Arrays.toString(data.toArray()));
+        System.out.println(Arrays.deepToString(reviews.toArray()));
+        String str  = reviews.get(0).get(0);
+        String str1  = reviews.get(0).get(1);
     }
 
     @Override

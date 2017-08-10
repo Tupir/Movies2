@@ -49,10 +49,10 @@ public class NetworkUtils {
         return url;
     }
 
-    public static URL buildUrlForTrailer(String id) {
+    public static URL buildUrlForTrailer(String id, String filter) {
 
         Uri builtUri = Uri.parse(MOVIEDB_BASE_URL).buildUpon()
-                .appendEncodedPath(id.toString()+"/videos")
+                .appendEncodedPath(id.toString()+"/"+filter)
                 .appendQueryParameter(PARAM_QUERY, PARAM_KEY)
                 .build();
 

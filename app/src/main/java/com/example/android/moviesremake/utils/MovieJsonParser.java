@@ -5,6 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by PepovPC on 7/17/2017.
@@ -63,8 +64,6 @@ public class MovieJsonParser {
     public static ArrayList<String> getTrailers(String id)
             throws JSONException {
 
-        //String url = "http://api.themoviedb.org/3/movie/321612/videos?api_key=c88f3eabe09958ae472c9cd7e20b38aa";
-
         ArrayList<String> trailers = new ArrayList<>();
 
         final String OWM_RESULT = "results";
@@ -87,6 +86,39 @@ public class MovieJsonParser {
         }
 
         return trailers;
+    }
+
+
+    public static List<List<String>> getReviews(String reviewJson)
+            throws JSONException {
+
+
+        List<List<String>> reviews = new ArrayList<>();
+
+        final String OWM_RESULT = "results";
+        final String OWM_AUTHOR = "author";
+        final String OWM_COMMENT = "content";
+
+        JSONObject trailerJson = new JSONObject(reviewJson);
+
+        // JSONArray ked mas v JSONe znam "["
+        JSONArray weatherArray = trailerJson.getJSONArray(OWM_RESULT);
+
+        for(int i = 0; i < weatherArray.length(); i++) {
+            // JSONObject ked mas v JSONe znam "{"
+            JSONObject movieForecast = weatherArray.getJSONObject(i);
+            String author = movieForecast.getString(OWM_AUTHOR);
+            String comment = movieForecast.getString(OWM_COMMENT);
+
+            List<String> x = new ArrayList<String>();
+            x.add(author);
+            x.add(comment);
+            System.out.println(author);
+            System.out.println(comment);
+            reviews.add(x);
+        }
+
+        return reviews;
     }
 
 

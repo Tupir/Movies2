@@ -51,7 +51,7 @@ public class FavoriteDetailActivity extends AppCompatActivity implements  Loader
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
+        setContentView(R.layout.activity_detail_relative);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ButterKnife.bind(this); // before setText
 

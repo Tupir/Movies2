@@ -19,6 +19,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import static android.media.CamcorderProfile.get;
+
 
 public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ForecastAdapterViewHolder> {
 
@@ -26,12 +28,20 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ForecastAd
     private ArrayList<String> trailers;
     private Context context;
     private final ForecastAdapterOnClickHandler mClickHandler;
+    private static final int VIEW_TRAILERS = 0;
+    private static final int VIEW_REVIEWS = 1;
 
-    /**
-     * Rozhranie, ktore urcuje, co sa vykona po kliknuti na konkretny view
-     */
+
+    class ViewHolder0 extends RecyclerView.ViewHolder {
+        public ViewHolder0(View itemView){
+            super(itemView);
+        }
+    }
+
+
+
     public interface ForecastAdapterOnClickHandler {
-        void onClick(String trailers);
+        void onClick(String trailer);
     }
 
     public DetailAdapter(Context context, ForecastAdapterOnClickHandler clickHandler) {
@@ -39,29 +49,27 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ForecastAd
         mClickHandler = clickHandler;   // for Clicking
     }
 
-    /**
-     * Cache of the children views for a forecast list item.
-     * Tato mala trieda obsahuje v sebe vsetko co ma obsahovat kazdy jednotlivy view
-     * Vytvori a inicializuje ich
-     * Tiez implementuje rozhranie, ktore umozni click (tak ako v main), ale tu sa nastavuju data (pozicia, movie)
-     */
+
+
     public class ForecastAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public final ConstraintLayout trailerView;
+        //public final ConstraintLayout trailerView;
         public final TextView trailer;
+        public final ImageView image;
 
        public ForecastAdapterViewHolder(View view) {
             super(view);
-           trailerView = (ConstraintLayout) view.findViewById(R.id.trailerConst);
+           //trailerView = (ConstraintLayout) view.findViewById(R.id.trailerConst);
            trailer = (TextView) view.findViewById(R.id.trailer);
+           image = (ImageView) view.findViewById(R.id.imageView);
            view.setOnClickListener(this);
         }
 
         @Override
-        public void onClick(View v) {       // dokoncit
+        public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-//            Movie movie = moviesData.get(adapterPosition);
-//            mClickHandler.onClick(movie);
+            String url = trailers.get(adapterPosition);
+            mClickHandler.onClick(url);
         }
     }
 
@@ -80,36 +88,50 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ForecastAd
 
         View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
         return new ForecastAdapterViewHolder(view);
+
+//        int layoutId;
+//        switch (viewType) {
+//
+//            case VIEW_TYPE_TODAY: {
+//                layoutId = R.layout.list_item_forecast_today;
+//                break;
+//            }
+//
+//            case VIEW_TYPE_FUTURE_DAY: {
+//                layoutId = R.layout.forecast_list_item;
+//                break;
+//            }
+//
+//            default:
+//                throw new IllegalArgumentException("Invalid view type, value of " + viewType);
+//        }
+//
+//        View view = LayoutInflater.from(mContext).inflate(layoutId, viewGroup, false);
+//
+//        view.setFocusable(true);
+//
+//        return new ForecastAdapterViewHolder(view);
+
     }
 
-    /**
-     * OnBindViewHolder is called by the RecyclerView to display the data at the specified
-     * position. In this method, we update the contents of the ViewHolder to display the weather
-     * details for this particular position, using the "position" argument that is conveniently
-     * passed into us.
-     *
-     * @param forecastAdapterViewHolder The ViewHolder which should be updated to represent the
-     *                                  contents of the item at the given position in the data set.
-     * @param position                  The position of the item within the adapter's data set.
-     *
-     * Vykresluje/nastavuje/vizualizuje data
-     *
-     */
+
     @Override
     public void onBindViewHolder(ForecastAdapterViewHolder forecastAdapterViewHolder, int position) {
-        //forecastAdapterViewHolder.trailer.setText("Trailer "+Integer.toString(position));
+        forecastAdapterViewHolder.trailer.setText("Trailer "+Integer.toString(++position));
     }
 
-    /**
-     * This method simply returns the number of items to display. It is used behind the scenes
-     * to help layout our Views and for animations.
-     *
-     * @return The number of items available in our forecast
-     */
+
     @Override
     public int getItemCount() {
         if (null == trailers) return 0;
         return trailers.size();
+    }
+
+
+    public void setTrailerData(ArrayList<String> data) {
+        if(data==null) {return;}
+        trailers = data;
+        notifyDataSetChanged();
     }
 
 

@@ -63,13 +63,12 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         Intent intentThatStartedThisActivity = getIntent();
         if (intentThatStartedThisActivity != null) {
             if (intentThatStartedThisActivity.hasExtra("movies")) {
-                //setTitle(mForecast.getTitle());
                 mForecast = intentThatStartedThisActivity.getParcelableExtra("movies");
+                setTitle(mForecast.getTitle());
                 Picasso.with(this).load(mForecast.getImage()).into(imageView);
                 textRelease.setText(mForecast.getRelease());
                 textVote.setText(mForecast.getVote()+"/10".toString());
                 textOverview.setText(mForecast.getOverview());
-                textOverview.setMovementMethod(new ScrollingMovementMethod());  // for scrolling
             }
         }
 
@@ -132,27 +131,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 cv);
     }
 
-    public void testingButton(View view){
-
-
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse("https://www.youtube.com/watch?v=xw-QIZZwDBg"));
-
-        // Always use string resources for UI text. This says something like "Share this photo with"
-        String title = (String) getResources().getText(R.string.chooser_title);
-        // Create and start the chooser
-
-        Intent chooser = Intent.createChooser(intent, title);
-
-        try {
-            this.startActivity(chooser);
-        } catch (ActivityNotFoundException ex) {
-            intent.setPackage("com.android.chrome");
-            this.startActivity(chooser);
-        }
-
-
-    }
 
     @Override
     public Loader<ArrayList<String>> onCreateLoader(int id, Bundle args) {
@@ -201,11 +179,11 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
                     trailers = MovieJsonParser.getTrailers(jsonWeatherResponse);
 
-                    return trailers;
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return null;
+                    System.out.println("Movie does not have data yet");
                 }
+                return trailers;
             }
 
 
@@ -220,10 +198,14 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     @Override
     public void onLoadFinished(Loader<ArrayList<String>> loader, ArrayList<String> data) {
+        if(data == null || reviews == null){    // if there is still not trailer/review on web page
+            return;
+        }
         System.out.println(Arrays.toString(data.toArray()));
         System.out.println(Arrays.deepToString(reviews.toArray()));
         String str  = reviews.get(0).get(0);
         String str1  = reviews.get(0).get(1);
+        mAdapter.setTrailerData(data);
     }
 
     @Override
@@ -232,7 +214,21 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     @Override
-    public void onClick(String trailer) {
+    public void onClick(String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("https://www.youtube.com/watch?v="+url));
 
+        // Always use string resources for UI text. This says something like "Share this photo with"
+        String title = (String) getResources().getText(R.string.chooser_title);
+        // Create and start the chooser
+
+        Intent chooser = Intent.createChooser(intent, title);
+
+        try {
+            this.startActivity(chooser);
+        } catch (ActivityNotFoundException ex) {
+            intent.setPackage("com.android.chrome");
+            this.startActivity(chooser);
+        }
     }
 }

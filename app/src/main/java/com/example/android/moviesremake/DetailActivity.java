@@ -11,6 +11,10 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.method.ScrollingMovementMethod;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,11 +38,15 @@ import butterknife.ButterKnife;
 
 import static com.example.android.moviesremake.MainActivity.mLoadingIndicator;
 
-public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<String>>{
+public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<String>>,
+        DetailAdapter.ForecastAdapterOnClickHandler{
 
-    private static final int ID_DETAIL_LOADER = 166;
+    private static final int ID_DETAIL_LOADER = 163;
 
     private Movie mForecast;
+    private DetailAdapter mAdapter;
+    private RecyclerView recycler;
+
     List<List<String>> reviews = new ArrayList<>();
     @Bind(R.id.overview) TextView textOverview;
     @Bind(R.id.vote) TextView textVote;
@@ -64,6 +72,15 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 textOverview.setMovementMethod(new ScrollingMovementMethod());  // for scrolling
             }
         }
+
+        // nastavenie recyclerview
+        recycler = (RecyclerView) findViewById(R.id.trailers);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recycler.setLayoutManager(layoutManager);
+        recycler.setHasFixedSize(true);
+
+        mAdapter = new DetailAdapter(this, this);
+        recycler.setAdapter(mAdapter);
 
         getSupportLoaderManager().initLoader(ID_DETAIL_LOADER, null, this);
 
@@ -211,6 +228,11 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     @Override
     public void onLoaderReset(Loader<ArrayList<String>> loader) {
+
+    }
+
+    @Override
+    public void onClick(String trailer) {
 
     }
 }

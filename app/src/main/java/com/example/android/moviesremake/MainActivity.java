@@ -112,12 +112,6 @@ public class MainActivity extends AppCompatActivity implements
 
 
 
-
-
-
-
-
-
     /**
      * Override metoda z rozhrania, ktore sa nachadza v Adapteri
      * Urcuje, co sa ma stat po stlaceni na konkretny view

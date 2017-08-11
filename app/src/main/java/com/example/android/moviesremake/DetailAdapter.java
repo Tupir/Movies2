@@ -6,11 +6,13 @@ package com.example.android.moviesremake;
  */
 
 import android.content.Context;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.android.moviesremake.utils.Movie;
 import com.squareup.picasso.Picasso;
@@ -21,7 +23,7 @@ import java.util.ArrayList;
 public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ForecastAdapterViewHolder> {
 
     private static final String TAG = DetailAdapter.class.getSimpleName();
-    private ArrayList<Movie> moviesData;
+    private ArrayList<String> trailers;
     private Context context;
     private final ForecastAdapterOnClickHandler mClickHandler;
 
@@ -29,11 +31,11 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ForecastAd
      * Rozhranie, ktore urcuje, co sa vykona po kliknuti na konkretny view
      */
     public interface ForecastAdapterOnClickHandler {
-        void onClick(Movie weatherForDay);
+        void onClick(String trailers);
     }
 
     public DetailAdapter(Context context, ForecastAdapterOnClickHandler clickHandler) {
-        this.context = context;         // for Picasso
+        this.context = context;
         mClickHandler = clickHandler;   // for Clicking
     }
 
@@ -45,19 +47,21 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ForecastAd
      */
     public class ForecastAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public final ImageView obrazek;
+        public final ConstraintLayout trailerView;
+        public final TextView trailer;
 
        public ForecastAdapterViewHolder(View view) {
             super(view);
-            obrazek = (ImageView) view.findViewById(R.id.tv_item_number);
+           trailerView = (ConstraintLayout) view.findViewById(R.id.trailerConst);
+           trailer = (TextView) view.findViewById(R.id.trailer);
            view.setOnClickListener(this);
         }
 
         @Override
-        public void onClick(View v) {
+        public void onClick(View v) {       // dokoncit
             int adapterPosition = getAdapterPosition();
-            Movie movie = moviesData.get(adapterPosition);
-            mClickHandler.onClick(movie);
+//            Movie movie = moviesData.get(adapterPosition);
+//            mClickHandler.onClick(movie);
         }
     }
 
@@ -70,7 +74,7 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ForecastAd
     @Override
     public ForecastAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         Context context = viewGroup.getContext();
-        int layoutIdForListItem = R.layout.movie_grid_item;
+        int layoutIdForListItem = R.layout.trailer_item;
         LayoutInflater inflater = LayoutInflater.from(context);
         boolean shouldAttachToParentImmediately = false;
 
@@ -93,17 +97,7 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ForecastAd
      */
     @Override
     public void onBindViewHolder(ForecastAdapterViewHolder forecastAdapterViewHolder, int position) {
-        String weatherForThisDay = moviesData.get(position).getImage();
-        System.out.println(weatherForThisDay);
-        Picasso.with(context)
-                .load(weatherForThisDay)
-                .placeholder(R.drawable.no_image)
-                .error(R.drawable.no_image)
-                .into(forecastAdapterViewHolder.obrazek);
-
-//        String weatherForThisDay = moviesData.get(position).getTitle();
-//        forecastAdapterViewHolder.mWeatherTextView.setText(weatherForThisDay);
-
+        //forecastAdapterViewHolder.trailer.setText("Trailer "+Integer.toString(position));
     }
 
     /**
@@ -114,19 +108,9 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ForecastAd
      */
     @Override
     public int getItemCount() {
-        if (null == moviesData) return 0;
-        return moviesData.size();
+        if (null == trailers) return 0;
+        return trailers.size();
     }
 
-    /**
-     * This method is used to set the movies on a Adapter if we've already
-     * created one. This is handy when we get new data from the web but don't want to create a
-     * new ForecastAdapter to display it.
-     *
-     * @param data The new weather data to be displayed.
-     */
-    public void setMoviesData(ArrayList<Movie> data) {
-        moviesData = data;
-        notifyDataSetChanged();
-    }
+
 }

@@ -1,5 +1,7 @@
 package com.example.android.moviesremake;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,7 +10,10 @@ import android.support.v4.app.NavUtils;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,9 +24,14 @@ import com.squareup.picasso.Picasso;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
+import static com.example.android.moviesremake.DetailActivity.ID_REVIEW_LOADER2;
+import static com.example.android.moviesremake.DetailActivity.ID_TRAILER_LOADER;
 import static com.example.android.moviesremake.R.id.overview;
+import static com.example.android.moviesremake.R.id.reviews;
+import static com.example.android.moviesremake.R.id.trailers;
 
-public class FavoriteDetailActivity extends AppCompatActivity implements  LoaderManager.LoaderCallbacks<Cursor>{
+public class FavoriteDetailActivity extends AppCompatActivity implements  LoaderManager.LoaderCallbacks<Cursor>,
+        DetailAdapter.ForecastAdapterOnClickHandler{
 
 
     public static final String[] MAIN_MOVIE_PROJECTION = {
@@ -30,6 +40,7 @@ public class FavoriteDetailActivity extends AppCompatActivity implements  Loader
             MovieTableContents.MovieEntry.COLUMN_RELEASE,
             MovieTableContents.MovieEntry.COLUMN_TITLE,
             MovieTableContents.MovieEntry.COLUMN_VOTE,
+            MovieTableContents.MovieEntry.COLUMN_ID,
     };
 
 
@@ -38,10 +49,14 @@ public class FavoriteDetailActivity extends AppCompatActivity implements  Loader
     public static final int INDEX_MOVIE_RELEASE = 2;
     public static final int INDEX_MOVIE_TITLE = 3;
     public static final int INDEX_MOVIE_VOTE = 4;
+    public static final int INDEX_MOVIE_ID = 5;
 
 
     private static final int ID_DETAIL_LOADER = 16;
     private Uri mUri;
+    private DetailAdapter mAdapter;
+    private RecyclerView recycler;
+    int movieId;
 
     @Bind(overview) TextView textOverview;
     @Bind(R.id.vote) TextView textVote;
@@ -55,12 +70,55 @@ public class FavoriteDetailActivity extends AppCompatActivity implements  Loader
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ButterKnife.bind(this); // before setText
 
+        View b = findViewById(R.id.favorite_button);
+        b.setVisibility(View.GONE);
 
         mUri = getIntent().getData();
         if (mUri == null) throw new NullPointerException("URI for DetailActivity cannot be null");
         getSupportLoaderManager().initLoader(ID_DETAIL_LOADER, null, this);
 
+        movieId = getMovieId(getIntent().getStringExtra("id")); // returns ID of movie
 
+        // nastavenie recyclerview
+        recycler = (RecyclerView) findViewById(trailers);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recycler.setLayoutManager(layoutManager);
+        recycler.setHasFixedSize(true);
+
+        mAdapter = new DetailAdapter(this, this);
+        recycler.setAdapter(mAdapter);
+
+        getSupportLoaderManager().initLoader(ID_TRAILER_LOADER, null, new TrailerAndReviewLoader(this, mAdapter, movieId));
+
+        // nastavenie recyclerview
+        recycler = (RecyclerView) findViewById(reviews);
+        RecyclerView.LayoutManager layoutManager2 = new LinearLayoutManager(this);
+        recycler.setLayoutManager(layoutManager2);
+        recycler.setHasFixedSize(true);
+
+        mAdapter = new DetailAdapter(this, this);
+        recycler.setAdapter(mAdapter);
+
+        getSupportLoaderManager().initLoader(ID_REVIEW_LOADER2, null, new TrailerAndReviewLoader(this, mAdapter, movieId));
+
+
+
+    }
+
+
+    public int getMovieId(String query){
+        Cursor cursor = this.getContentResolver().query(MovieTableContents.MovieEntry.CONTENT_URI,
+                null,   //new String[] {"image"}
+                MovieTableContents.MovieEntry.COLUMN_IMAGE + " = ? ",
+                new String[]{query},
+                null);
+
+        if(cursor.moveToFirst()) {
+            System.out.println(cursor.getInt(INDEX_MOVIE_ID));
+            return cursor.getInt(INDEX_MOVIE_ID);
+        }
+        System.out.println("Error finding an ID of movie");
+        return 0;
     }
 
 
@@ -129,12 +187,32 @@ public class FavoriteDetailActivity extends AppCompatActivity implements  Loader
 
         float vote = data.getFloat(INDEX_MOVIE_VOTE);
         String voteStr = Float.toString(vote);
-        textVote.setText(voteStr);
-
+        textVote.setText(voteStr+"/10 ");
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
     }
+
+    @Override
+    public void onClick(String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("https://www.youtube.com/watch?v="+url));
+
+        // Always use string resources for UI text. This says something like "Share this photo with"
+        String title = (String) getResources().getText(R.string.chooser_title);
+        // Create and start the chooser
+
+        Intent chooser = Intent.createChooser(intent, title);
+
+        try {
+            this.startActivity(chooser);
+        } catch (ActivityNotFoundException ex) {
+            intent.setPackage("com.android.chrome");
+            this.startActivity(chooser);
+        }
+    }
+
+
 }

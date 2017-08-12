@@ -27,6 +27,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.Foreca
     private Context context;
     private final ForecastAdapterOnClickHandler mClickHandler;
     private Cursor mCursor;
+    int id;
 
     /**
      * Rozhranie, ktore urcuje, co sa vykona po kliknuti na konkretny view

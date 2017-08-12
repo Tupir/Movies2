@@ -34,6 +34,7 @@ public class FavoriteActivity extends AppCompatActivity implements
      */
     public static final String[] MAIN_FORECAST_PROJECTION = {
             MovieTableContents.MovieEntry.COLUMN_IMAGE,
+            MovieTableContents.MovieEntry.COLUMN_ID,
     };
 
     //  COMPLETED (17) Create constant int values representing each column name's position above
@@ -43,6 +44,7 @@ public class FavoriteActivity extends AppCompatActivity implements
      * must be adjusted to match the order of the Strings.
      */
     public static final int INDEX_MOVIE_IMAGE = 0;
+    public static final int INDEX_MOVIE_ID = 1;
 
 
 
@@ -116,6 +118,7 @@ public class FavoriteActivity extends AppCompatActivity implements
 
         Uri forMovieClicked = MovieTableContents.MovieEntry.buildOneMovieUri(image);
         intentToStartDetailActivity.setData(forMovieClicked);
+        intentToStartDetailActivity.putExtra("id", image);
         startActivity(intentToStartDetailActivity);
     }
 

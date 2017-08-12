@@ -48,6 +48,8 @@ public class MovieTableContents {
 
         public static final String COLUMN_RELEASE = "release";
 
+        public static final String COLUMN_ID = "id";
+
 
         public static Uri buildOneMovieUri(String image) {
             return CONTENT_URI.buildUpon()

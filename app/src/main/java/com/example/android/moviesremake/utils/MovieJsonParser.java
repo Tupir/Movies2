@@ -61,39 +61,34 @@ public class MovieJsonParser {
     }
 
 
-    public static ArrayList<String> getTrailers(String id)
+    public static List<List<String>> getTrailers(String id, List<List<String>> trailers)
             throws JSONException {
-
-        ArrayList<String> trailers = new ArrayList<>();
 
         final String OWM_RESULT = "results";
         final String OWM_KEY = "key";
-
 
         JSONObject trailerJson = new JSONObject(id);
 
         // JSONArray ked mas v JSONe znam "["
         JSONArray weatherArray = trailerJson.getJSONArray(OWM_RESULT);
-        trailers.clear();
 
         for(int i = 0; i < 2; i++) {
             // JSONObject ked mas v JSONe znam "{"
             JSONObject movieForecast = weatherArray.getJSONObject(i);
             String key = movieForecast.getString(OWM_KEY);
-
-            trailers.add(key);
-            System.out.println(key);
+            List<String> x = new ArrayList<String>();
+            x.add(key);
+            trailers.add(x);
         }
 
         return trailers;
     }
 
 
-    public static List<List<String>> getReviews(String reviewJson)
+    public static List<List<String>> getReviews(String reviewJson, List<List<String>> reviews)
             throws JSONException {
 
 
-        List<List<String>> reviews = new ArrayList<>();
 
         final String OWM_RESULT = "results";
         final String OWM_AUTHOR = "author";
@@ -109,12 +104,9 @@ public class MovieJsonParser {
             JSONObject movieForecast = weatherArray.getJSONObject(i);
             String author = movieForecast.getString(OWM_AUTHOR);
             String comment = movieForecast.getString(OWM_COMMENT);
-
-            List<String> x = new ArrayList<String>();
+            List<String> x = new ArrayList<>();
             x.add(author);
             x.add(comment);
-            System.out.println(author);
-            System.out.println(comment);
             reviews.add(x);
         }
 

@@ -6,16 +6,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
-import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.method.ScrollingMovementMethod;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -24,30 +18,25 @@ import android.widget.Toast;
 
 import com.example.android.moviesremake.data.MovieTableContents;
 import com.example.android.moviesremake.utils.Movie;
-import com.example.android.moviesremake.utils.MovieJsonParser;
-import com.example.android.moviesremake.utils.NetworkUtils;
 import com.squareup.picasso.Picasso;
-
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-import static com.example.android.moviesremake.MainActivity.mLoadingIndicator;
+import static com.example.android.moviesremake.R.id.reviews;
+import static com.example.android.moviesremake.R.id.trailers;
 
-public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<String>>,
-        DetailAdapter.ForecastAdapterOnClickHandler{
+public class DetailActivity extends AppCompatActivity implements DetailAdapter.ForecastAdapterOnClickHandler{
 
-    private static final int ID_DETAIL_LOADER = 163;
+    public static final int ID_TRAILER_LOADER = 163;
+
+    public static final int ID_REVIEW_LOADER2 = 161;
 
     private Movie mForecast;
     private DetailAdapter mAdapter;
     private RecyclerView recycler;
 
-    List<List<String>> reviews = new ArrayList<>();
+
     @Bind(R.id.overview) TextView textOverview;
     @Bind(R.id.vote) TextView textVote;
     @Bind(R.id.release) TextView textRelease;
@@ -73,7 +62,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         }
 
         // nastavenie recyclerview
-        recycler = (RecyclerView) findViewById(R.id.trailers);
+        recycler = (RecyclerView) findViewById(trailers);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recycler.setLayoutManager(layoutManager);
         recycler.setHasFixedSize(true);
@@ -81,7 +70,21 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         mAdapter = new DetailAdapter(this, this);
         recycler.setAdapter(mAdapter);
 
-        getSupportLoaderManager().initLoader(ID_DETAIL_LOADER, null, this);
+
+
+        getSupportLoaderManager().initLoader(ID_TRAILER_LOADER, null, new TrailerAndReviewLoader(this, mAdapter, mForecast.getId()));
+
+        // nastavenie recyclerview
+        recycler = (RecyclerView) findViewById(reviews);
+        RecyclerView.LayoutManager layoutManager2 = new LinearLayoutManager(this);
+        recycler.setLayoutManager(layoutManager2);
+        recycler.setHasFixedSize(true);
+
+        mAdapter = new DetailAdapter(this, this);
+        recycler.setAdapter(mAdapter);
+
+        getSupportLoaderManager().initLoader(ID_REVIEW_LOADER2, null, new TrailerAndReviewLoader(this, mAdapter, mForecast.getId()));
+        
 
     }
 
@@ -107,6 +110,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         cv.put(MovieTableContents.MovieEntry.COLUMN_RELEASE, mForecast.getRelease());
         cv.put(MovieTableContents.MovieEntry.COLUMN_VOTE, mForecast.getVote());
         cv.put(MovieTableContents.MovieEntry.COLUMN_OVERVIEW, mForecast.getOverview());
+        cv.put(MovieTableContents.MovieEntry.COLUMN_ID, mForecast.getId());
 
         /**
          * Checking if movie is in database already
@@ -131,87 +135,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
                 cv);
     }
 
-
-    @Override
-    public Loader<ArrayList<String>> onCreateLoader(int id, Bundle args) {
-        return new AsyncTaskLoader<ArrayList<String>>(this) {
-
-            ArrayList<String> trailers = null;
-
-            /**
-             * Subclasses of AsyncTaskLoader must implement this to take care of loading their data.
-             * The same as onPreExecute() v AsyncTask
-             */
-            @Override
-            protected void onStartLoading() {
-                if (trailers != null) {
-                    deliverResult(trailers);
-                } else {
-                    mLoadingIndicator.setVisibility(View.VISIBLE);
-                    forceLoad();
-                }
-            }
-
-            /**
-             * This is the method of the AsyncTaskLoader that will load and parse the JSON data
-             *
-             * @return Movie data as an array of Movies.
-             *         null if an error occurs
-             */
-
-            @Override
-            public ArrayList<String> loadInBackground() {
-
-
-                System.out.println(mForecast.getId());
-
-                URL videos = NetworkUtils.buildUrlForTrailer(Integer.toString(mForecast.getId()), "videos");
-                URL weatherRequestUr2 = NetworkUtils.buildUrlForTrailer(Integer.toString(mForecast.getId()), "reviews");
-
-                try {
-                    String jsonWeatherResponse = NetworkUtils   // JSON for trailer
-                            .getResponseFromHttpUrl(videos);
-
-                    String jsonWeatherResponse1 = NetworkUtils     // JSON for reviews
-                            .getResponseFromHttpUrl(weatherRequestUr2);
-
-                    reviews = MovieJsonParser.getReviews(jsonWeatherResponse1);
-
-                    trailers = MovieJsonParser.getTrailers(jsonWeatherResponse);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.out.println("Movie does not have data yet");
-                }
-                return trailers;
-            }
-
-
-
-            public void deliverResult(ArrayList<String> data) {
-                trailers = data;
-                super.deliverResult(trailers);
-            }
-
-        };
-    }
-
-    @Override
-    public void onLoadFinished(Loader<ArrayList<String>> loader, ArrayList<String> data) {
-        if(data == null || reviews == null){    // if there is still not trailer/review on web page
-            return;
-        }
-        System.out.println(Arrays.toString(data.toArray()));
-        System.out.println(Arrays.deepToString(reviews.toArray()));
-        String str  = reviews.get(0).get(0);
-        String str1  = reviews.get(0).get(1);
-        mAdapter.setTrailerData(data);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<ArrayList<String>> loader) {
-
-    }
 
     @Override
     public void onClick(String url) {

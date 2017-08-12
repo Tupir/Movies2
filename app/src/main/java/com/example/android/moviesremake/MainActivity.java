@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -51,9 +49,6 @@ public class MainActivity extends AppCompatActivity implements
             Toast.makeText(getApplicationContext(), "Connection not available", Toast.LENGTH_SHORT).show();
         }
 
-        if(!isStoragePermissionGranted()){
-            System.out.println("NEMAS PRAVA");
-        }
 
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);  // loader
 

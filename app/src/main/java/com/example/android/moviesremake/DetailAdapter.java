@@ -6,23 +6,17 @@ package com.example.android.moviesremake;
  */
 
 import android.content.Context;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.android.moviesremake.utils.Movie;
-import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
+import java.util.List;
 
-import static android.media.CamcorderProfile.get;
 
-
-public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ForecastAdapterViewHolder> {
+public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final String TAG = DetailAdapter.class.getSimpleName();
     private ArrayList<String> trailers;
@@ -30,14 +24,7 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ForecastAd
     private final ForecastAdapterOnClickHandler mClickHandler;
     private static final int VIEW_TRAILERS = 0;
     private static final int VIEW_REVIEWS = 1;
-
-
-    class ViewHolder0 extends RecyclerView.ViewHolder {
-        public ViewHolder0(View itemView){
-            super(itemView);
-        }
-    }
-
+    List<List<String>> reviews = new ArrayList<>();
 
 
     public interface ForecastAdapterOnClickHandler {
@@ -50,87 +37,97 @@ public class DetailAdapter extends RecyclerView.Adapter<DetailAdapter.ForecastAd
     }
 
 
+    public class trailerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-    public class ForecastAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        //public final ConstraintLayout trailerView;
         public final TextView trailer;
-        public final ImageView image;
 
-       public ForecastAdapterViewHolder(View view) {
-            super(view);
-           //trailerView = (ConstraintLayout) view.findViewById(R.id.trailerConst);
-           trailer = (TextView) view.findViewById(R.id.trailer);
-           image = (ImageView) view.findViewById(R.id.imageView);
-           view.setOnClickListener(this);
+        public trailerViewHolder(View itemView) {
+            super(itemView);
+            trailer = (TextView) itemView.findViewById(R.id.trailer);
+            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            String url = trailers.get(adapterPosition);
+            String url = reviews.get(adapterPosition).get(0);
             mClickHandler.onClick(url);
         }
     }
 
-    /**
-     * This gets called when each new ViewHolder is created. This happens when the RecyclerView
-     * is laid out. Enough ViewHolders will be created to fill the screen and allow for scrolling.
-     * @return A new ForecastAdapterViewHolder that holds the View for each list item
-     *
-     */
-    @Override
-    public ForecastAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        Context context = viewGroup.getContext();
-        int layoutIdForListItem = R.layout.trailer_item;
-        LayoutInflater inflater = LayoutInflater.from(context);
-        boolean shouldAttachToParentImmediately = false;
+    public class reviewViewHolder extends RecyclerView.ViewHolder{
 
-        View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
-        return new ForecastAdapterViewHolder(view);
+        public final TextView name;
+        public final TextView text;
 
-//        int layoutId;
-//        switch (viewType) {
-//
-//            case VIEW_TYPE_TODAY: {
-//                layoutId = R.layout.list_item_forecast_today;
-//                break;
-//            }
-//
-//            case VIEW_TYPE_FUTURE_DAY: {
-//                layoutId = R.layout.forecast_list_item;
-//                break;
-//            }
-//
-//            default:
-//                throw new IllegalArgumentException("Invalid view type, value of " + viewType);
-//        }
-//
-//        View view = LayoutInflater.from(mContext).inflate(layoutId, viewGroup, false);
-//
-//        view.setFocusable(true);
-//
-//        return new ForecastAdapterViewHolder(view);
+        public reviewViewHolder(View itemView) {
+            super(itemView);
+            name = (TextView) itemView.findViewById(R.id.name);
+            text = (TextView) itemView.findViewById(R.id.text);
+        }
 
     }
 
 
     @Override
-    public void onBindViewHolder(ForecastAdapterViewHolder forecastAdapterViewHolder, int position) {
-        forecastAdapterViewHolder.trailer.setText("Trailer "+Integer.toString(++position));
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+
+        LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
+
+        if (viewType == VIEW_TRAILERS) {
+            View v = layoutInflater.inflate(R.layout.trailer_item, viewGroup, false);
+
+            return new trailerViewHolder(v);
+        } else {
+            View v = layoutInflater.inflate(R.layout.review_item, viewGroup, false);
+
+            return new reviewViewHolder(v);
+        }
+
+    }
+
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        int viewType = getItemViewType(position);
+        switch(viewType){
+            case VIEW_TRAILERS:
+                trailerViewHolder trailerViewHolder = (DetailAdapter.trailerViewHolder) holder;
+                //trailerViewHolder.trailer.setText(trailers.get(position));
+                trailerViewHolder.trailer.setText("Trailer "+Integer.toString(++position));
+                break;
+            case VIEW_REVIEWS:
+                reviewViewHolder reviewViewHolder = (DetailAdapter.reviewViewHolder) holder;
+                reviewViewHolder.name.setText(reviews.get(position).get(0)+": ");
+                reviewViewHolder.text.setText(reviews.get(position).get(1));
+
+                break;
+            default:
+                System.out.println("Error in onBindViewHolder method");
+        }
+
+
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if(reviews.get(position).size()==1)
+            return VIEW_TRAILERS;
+        else
+            return VIEW_REVIEWS;
     }
 
 
     @Override
     public int getItemCount() {
-        if (null == trailers) return 0;
-        return trailers.size();
+        if (null == reviews) return 0;
+        return reviews.size();
     }
 
 
-    public void setTrailerData(ArrayList<String> data) {
+    public void setTrailerData(List<List<String>> data) {
         if(data==null) {return;}
-        trailers = data;
+        reviews = data;
         notifyDataSetChanged();
     }
 

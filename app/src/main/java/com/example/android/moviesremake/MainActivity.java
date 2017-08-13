@@ -27,7 +27,7 @@ import com.example.android.moviesremake.utils.Movie;
 public class MainActivity extends AppCompatActivity implements
         MovieAdapter.ForecastAdapterOnClickHandler,     // recycler view click handler
 //        LoaderManager.LoaderCallbacks<ArrayList<Movie>>,    // AsyncTask
-        SharedPreferences.OnSharedPreferenceChangeListener{     // settings change
+        SharedPreferences.OnSharedPreferenceChangeListener {     // settings change
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private MovieAdapter mAdapter;
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // if there is no connection
-        if(!isNetworkAvailable()){
+        if (!isNetworkAvailable()) {
             Toast.makeText(getApplicationContext(), "Connection not available", Toast.LENGTH_SHORT).show();
         }
 
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements
         int loaderId = FORECAST_LOADER_ID;
         //LoaderManager.LoaderCallbacks<ArrayList<Movie>> callback = MainActivity.this;
         Bundle bundleForLoader = null;
-        getSupportLoaderManager().initLoader(loaderId, bundleForLoader,new MovieLoader(this, mAdapter));
+        getSupportLoaderManager().initLoader(loaderId, bundleForLoader, new MovieLoader(this, mAdapter));
 
         /*
          * Register MainActivity as an OnPreferenceChangedListener to receive a callback when a
@@ -82,31 +82,26 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-
     /**
-    ask for permissions
-
+     * ask for permissions
      */
-    public  boolean isStoragePermissionGranted() {
+    public boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
-                Log.v(TAG,"Permission is granted");
+                Log.v(TAG, "Permission is granted");
                 return true;
             } else {
 
-                Log.v(TAG,"Permission is revoked");
+                Log.v(TAG, "Permission is revoked");
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
                 return false;
             }
-        }
-        else { //permission is automatically granted on sdk<23 upon installation
-            Log.v(TAG,"Permission is granted");
+        } else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG, "Permission is granted");
             return true;
         }
     }
-
-
 
 
     /**

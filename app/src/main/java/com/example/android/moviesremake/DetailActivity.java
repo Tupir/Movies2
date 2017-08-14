@@ -101,7 +101,7 @@ public class DetailActivity extends AppCompatActivity implements DetailAdapter.F
         return super.onOptionsItemSelected(item);
     }
 
-
+// maybe code an delete from database after clicking on it again?
     public void insertMovieToDatabase(View view){
         ContentValues cv = new ContentValues();
 
@@ -130,6 +130,7 @@ public class DetailActivity extends AppCompatActivity implements DetailAdapter.F
             return;
         }
 
+        // better to use: Using AsyncQueryHandler to Access Content Providers Asynchronously in Android?
         this.getContentResolver().insert(
                 MovieTableContents.MovieEntry.CONTENT_URI,
                 cv);

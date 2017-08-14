@@ -5,6 +5,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.example.android.moviesremake.data.MovieTableContents.MovieEntry;
+
+import static com.example.android.moviesremake.data.MovieTableContents.MovieEntry.COLUMN_IMAGE;
+import static com.example.android.moviesremake.data.MovieTableContents.MovieEntry.TABLE_NAME;
+
 /**
  * Created by PepovPC on 8/6/2017.
  */
@@ -25,7 +29,7 @@ public class MovieDbHelper extends SQLiteOpenHelper{
         return sInstance;
     }
 
-    private static final int DATABASE_VERSION = 5;     // always increment when changes come
+    private static final int DATABASE_VERSION = 7;     // always increment when changes come
 
     private MovieDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -47,7 +51,7 @@ public class MovieDbHelper extends SQLiteOpenHelper{
          */
         final String SQL_CREATE_MOVIE_TABLE =
 
-                "CREATE TABLE " + MovieEntry.TABLE_NAME + " (" +
+                "CREATE TABLE " + TABLE_NAME + " (" +
 
                 /*
                  * WeatherEntry did not explicitly declare a column called "_ID". However,
@@ -56,7 +60,7 @@ public class MovieDbHelper extends SQLiteOpenHelper{
                  */
                         MovieEntry._ID               + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 
-                        MovieEntry.COLUMN_IMAGE      + " VARCHAR (255), "                 +
+                        COLUMN_IMAGE      + " VARCHAR (255), "                 +
 
                         MovieEntry.COLUMN_TITLE      +  " VARCHAR (255), "                 +
 
@@ -76,6 +80,10 @@ public class MovieDbHelper extends SQLiteOpenHelper{
     }
 
 
+    private static final String DATABASE_ALTER = "ALTER TABLE "
+            + TABLE_NAME + " ADD COLUMN " + COLUMN_IMAGE + " string;";
+
+
     /**
      * This database is only a cache for online data, so its upgrade policy is simply to discard
      * the data and call through to onCreate to recreate the table. Note that this only fires if
@@ -92,8 +100,8 @@ public class MovieDbHelper extends SQLiteOpenHelper{
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
 //      Within onUpgrade, drop the weather table if it exists
         System.out.println(oldVersion +"\n\n"+newVersion);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieEntry.TABLE_NAME);
-//      call onCreate and pass in the SQLiteDatabase (passed in to onUpgrade)
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+
         onCreate(sqLiteDatabase);
     }
 

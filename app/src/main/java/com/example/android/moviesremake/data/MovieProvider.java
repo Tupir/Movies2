@@ -122,7 +122,7 @@ public class MovieProvider extends ContentProvider {
          * lengthy operations will cause lag in your app. Since MovieDbHelper's constructor is
          * very lightweight, we are safe to perform that initialization here.
          */
-        mOpenHelper = new MovieDbHelper(getContext());
+        mOpenHelper = MovieDbHelper.getInstance(getContext());
 
 //      Return true from onCreate to signify success performing setup
         return true;

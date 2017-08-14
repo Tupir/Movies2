@@ -12,16 +12,22 @@ import com.example.android.moviesremake.data.MovieTableContents.MovieEntry;
 public class MovieDbHelper extends SQLiteOpenHelper{
 
 
-
+    private static MovieDbHelper sInstance;
     public static final String DATABASE_NAME = "movies.db";
 
-    /*
-     * If you change the database schema, you must increment the database version or the onUpgrade
-     * method will not be called.
-     */
-    private static final int DATABASE_VERSION = 4;
 
-    public MovieDbHelper(Context context) {
+    //  singleton ensures that only one MovieHelper will exists at any given time
+    public static synchronized MovieDbHelper getInstance(Context context) {
+
+        if (sInstance == null) {
+            sInstance = new MovieDbHelper(context.getApplicationContext());
+        }
+        return sInstance;
+    }
+
+    private static final int DATABASE_VERSION = 5;     // always increment when changes come
+
+    private MovieDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -85,6 +91,7 @@ public class MovieDbHelper extends SQLiteOpenHelper{
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
 //      Within onUpgrade, drop the weather table if it exists
+        System.out.println(oldVersion +"\n\n"+newVersion);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MovieEntry.TABLE_NAME);
 //      call onCreate and pass in the SQLiteDatabase (passed in to onUpgrade)
         onCreate(sqLiteDatabase);

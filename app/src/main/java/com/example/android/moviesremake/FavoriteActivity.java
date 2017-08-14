@@ -67,7 +67,7 @@ public class FavoriteActivity extends AppCompatActivity implements
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);  // loader
 
         //HelperClass.insertFakeData(this);
-        MovieDbHelper dbHelper = new MovieDbHelper(this);
+        MovieDbHelper dbHelper = MovieDbHelper.getInstance(this);
         mDb = dbHelper.getWritableDatabase();
         getAllFavoriteMovies();
 

@@ -131,6 +131,7 @@ public class DetailActivity extends AppCompatActivity implements DetailAdapter.F
         }
 
         // better to use: Using AsyncQueryHandler to Access Content Providers Asynchronously in Android?
+        // database operations should be in it's own thread
         this.getContentResolver().insert(
                 MovieTableContents.MovieEntry.CONTENT_URI,
                 cv);

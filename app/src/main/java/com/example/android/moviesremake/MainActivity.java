@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.example.android.moviesremake.settings.SettingsActivity;
 import com.example.android.moviesremake.utils.Movie;
 
+// maybe create job for updating movies from web
 public class MainActivity extends AppCompatActivity implements
         MovieAdapter.ForecastAdapterOnClickHandler,     // recycler view click handler
 //        LoaderManager.LoaderCallbacks<ArrayList<Movie>>,    // AsyncTask

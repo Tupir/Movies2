@@ -58,19 +58,19 @@ public class MovieDbHelper extends SQLiteOpenHelper{
                  * WeatherEntry implements the interface, "BaseColumns", which does have a field
                  * named "_ID". We use that here to designate our table's primary key.
                  */
-                        MovieEntry._ID               + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        MovieEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 
-                        COLUMN_IMAGE      + " VARCHAR (255), "                 +
+                        COLUMN_IMAGE + " VARCHAR (255), " +
 
-                        MovieEntry.COLUMN_TITLE      +  " VARCHAR (255), "                 +
+                        MovieEntry.COLUMN_TITLE + " VARCHAR (255), " +
 
-                        MovieEntry.COLUMN_OVERVIEW   + " VARCHAR (255), "                    +
+                        MovieEntry.COLUMN_OVERVIEW + " VARCHAR (255), " +
 
-                        MovieEntry.COLUMN_VOTE       + " REAL,"                    +
+                        MovieEntry.COLUMN_VOTE + " REAL," +
 
-                        MovieEntry.COLUMN_ID         + " INTEGER,"                    +
+                        MovieEntry.COLUMN_ID + " INTEGER," +
 
-                        MovieEntry.COLUMN_RELEASE   + " VARCHAR (255)"   + ");";
+                        MovieEntry.COLUMN_RELEASE + " VARCHAR (255)" + ");";
 
         /*
          * After we've spelled out our SQLite table creation statement above, we actually execute

@@ -20,6 +20,7 @@ import static com.example.android.moviesremake.MainActivity.mLoadingIndicator;
  * Created by PepovPC on 7/21/2017.
  */
 
+// is ok to do it on Cursor Loader,but try to meanwhile save all other movie items into DB as SERVICE?
 public class MovieLoader implements LoaderManager.LoaderCallbacks<ArrayList<Movie>>{
 
     public MovieAdapter mAdapter;

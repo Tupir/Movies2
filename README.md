@@ -1,8 +1,7 @@
 # Movies2
 
-- appka nacita z webu pomocou API filmy
-- zobrazi ich
-- v settings je mozne si nastavit, ci chceme aktualne najpopularnejsie alebo najoblubenejsie filmy
-- vieme si pozriet detaily kazdeho filmu
-- viem si filmy oznacit ako oblubene a ulozit do databazy
-- viem si pozriet komentater inych ludi na filmy a tiez si viem pozriet trailer filmu
+- it's extended version of MoviesRemake app
+- view movies, use settings to set what to view (popular/favorite)
+- detail of movie
+- add favorites to database
+- check for comments from others and trailers

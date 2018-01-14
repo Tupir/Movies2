@@ -13,6 +13,8 @@ import static com.example.android.moviesremake.data.MovieTableContents.MovieEntr
  * Created by PepovPC on 8/6/2017.
  */
 
+
+
 public class MovieDbHelper extends SQLiteOpenHelper{
 
 

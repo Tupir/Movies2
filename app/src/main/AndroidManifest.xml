@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -22,16 +22,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DetailActivity"
+            android:name=".details.DetailActivity"
             android:parentActivityName=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"/>
         <activity android:name=".settings.SettingsActivity" />
         <activity
-            android:name=".FavoriteActivity"
+            android:name=".favorites.FavoriteActivity"
             android:parentActivityName=".MainActivity"/>
         <activity
-            android:name=".FavoriteDetailActivity"
-            android:parentActivityName=".FavoriteActivity"
+            android:name=".details.FavoriteDetailActivity"
+            android:parentActivityName=".favorites.FavoriteActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"/>
         <provider
             android:authorities="@string/content_authority"

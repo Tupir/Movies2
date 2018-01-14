@@ -1,4 +1,4 @@
-package com.example.android.moviesremake;
+package com.example.android.moviesremake.favorites;
 
 /**
  * Created by PepovPC on 7/16/2017.
@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.android.moviesremake.R;
 import com.example.android.moviesremake.utils.Movie;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;

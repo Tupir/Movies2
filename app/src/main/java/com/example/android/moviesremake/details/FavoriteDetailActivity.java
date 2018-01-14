@@ -1,4 +1,4 @@
-package com.example.android.moviesremake;
+package com.example.android.moviesremake.details;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -17,15 +17,14 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.android.moviesremake.R;
 import com.example.android.moviesremake.data.MovieTableContents;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.example.android.moviesremake.DetailActivity.ID_REVIEW_LOADER2;
-import static com.example.android.moviesremake.DetailActivity.ID_TRAILER_LOADER;
 import static com.example.android.moviesremake.R.id.overview;
 import static com.example.android.moviesremake.R.id.reviews;
 import static com.example.android.moviesremake.R.id.trailers;
@@ -58,10 +57,10 @@ public class FavoriteDetailActivity extends AppCompatActivity implements  Loader
     private RecyclerView recycler;
     int movieId;
 
-    @Bind(overview) TextView textOverview;
-    @Bind(R.id.vote) TextView textVote;
-    @Bind(R.id.release) TextView textRelease;
-    @Bind(R.id.imageView1) ImageView imageView;
+    @BindView(overview) TextView textOverview;
+    @BindView(R.id.vote) TextView textVote;
+    @BindView(R.id.release) TextView textRelease;
+    @BindView(R.id.imageView1) ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +87,7 @@ public class FavoriteDetailActivity extends AppCompatActivity implements  Loader
         mAdapter = new DetailAdapter(this, this);
         recycler.setAdapter(mAdapter);
 
-        getSupportLoaderManager().initLoader(ID_TRAILER_LOADER, null, new TrailerAndReviewLoader(this, mAdapter, movieId));
+        getSupportLoaderManager().initLoader(DetailActivity.ID_TRAILER_LOADER, null, new TrailerAndReviewLoader(this, mAdapter, movieId));
 
         // nastavenie recyclerview
         recycler = (RecyclerView) findViewById(reviews);
@@ -99,7 +98,7 @@ public class FavoriteDetailActivity extends AppCompatActivity implements  Loader
         mAdapter = new DetailAdapter(this, this);
         recycler.setAdapter(mAdapter);
 
-        getSupportLoaderManager().initLoader(ID_REVIEW_LOADER2, null, new TrailerAndReviewLoader(this, mAdapter, movieId));
+        getSupportLoaderManager().initLoader(DetailActivity.ID_REVIEW_LOADER2, null, new TrailerAndReviewLoader(this, mAdapter, movieId));
 
 
 
@@ -107,7 +106,8 @@ public class FavoriteDetailActivity extends AppCompatActivity implements  Loader
 
 
     public int getMovieId(String query){
-        Cursor cursor = this.getContentResolver().query(MovieTableContents.MovieEntry.CONTENT_URI,
+        Cursor cursor = this.getContentResolver().
+                query(MovieTableContents.MovieEntry.CONTENT_URI,
                 null,   //new String[] {"image"}
                 MovieTableContents.MovieEntry.COLUMN_IMAGE + " = ? ",
                 new String[]{query},

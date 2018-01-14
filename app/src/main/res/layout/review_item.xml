@@ -23,9 +23,9 @@
 
     <TextView
         android:id="@+id/text"
-        android:layout_width="344dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView"
+        tools:text="Previous 2 parts were much etter story wise, however effects are good in this part"
         android:maxLines="50"
         app:layout_constraintLeft_toLeftOf="@+id/name"
         android:layout_marginTop="8dp"

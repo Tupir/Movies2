@@ -21,6 +21,8 @@ import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.android.moviesremake.details.DetailActivity;
+import com.example.android.moviesremake.favorites.FavoriteActivity;
 import com.example.android.moviesremake.settings.SettingsActivity;
 import com.example.android.moviesremake.utils.Movie;
 

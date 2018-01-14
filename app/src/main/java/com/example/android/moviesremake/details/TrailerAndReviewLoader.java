@@ -1,5 +1,6 @@
-package com.example.android.moviesremake;
+package com.example.android.moviesremake.details;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -14,7 +15,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.android.moviesremake.DetailActivity.ID_TRAILER_LOADER;
 import static com.example.android.moviesremake.MainActivity.mLoadingIndicator;
 /**
  * Created by PepovPC on 8/12/2017.
@@ -33,10 +33,11 @@ public class TrailerAndReviewLoader implements LoaderManager.LoaderCallbacks<Lis
         this.movieId = movieId;
     }
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     public Loader<List<List<String>>> onCreateLoader(final int id, Bundle args) {
 
-        if(id != ID_TRAILER_LOADER)
+        if(id != DetailActivity.ID_TRAILER_LOADER)
             mAdapter1 = mAdapter;
 
         return new AsyncTaskLoader<List<List<String>>>(context) {
@@ -70,7 +71,7 @@ public class TrailerAndReviewLoader implements LoaderManager.LoaderCallbacks<Lis
 
                 try {
 
-                    if(id == ID_TRAILER_LOADER) {
+                    if(id == DetailActivity.ID_TRAILER_LOADER) {
                         String jsonWeatherResponse = NetworkUtils   // JSON for trailer
                                 .getResponseFromHttpUrl(videos);
 
@@ -107,7 +108,7 @@ public class TrailerAndReviewLoader implements LoaderManager.LoaderCallbacks<Lis
             return;
         }
 
-        if(loader.getId()== ID_TRAILER_LOADER)
+        if(loader.getId()== DetailActivity.ID_TRAILER_LOADER)
             mAdapter.setTrailerData(data);
         else
             mAdapter1.setTrailerData(data);

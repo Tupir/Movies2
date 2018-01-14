@@ -1,4 +1,4 @@
-package com.example.android.moviesremake;
+package com.example.android.moviesremake.favorites;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,8 +18,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
 
+import com.example.android.moviesremake.R;
 import com.example.android.moviesremake.data.MovieDbHelper;
 import com.example.android.moviesremake.data.MovieTableContents;
+import com.example.android.moviesremake.details.FavoriteDetailActivity;
 
 public class FavoriteActivity extends AppCompatActivity implements
         FavoriteAdapter.ForecastAdapterOnClickHandler,    // recycler view click handler

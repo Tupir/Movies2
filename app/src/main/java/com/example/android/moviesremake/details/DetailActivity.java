@@ -1,4 +1,4 @@
-package com.example.android.moviesremake;
+package com.example.android.moviesremake.details;
 
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
@@ -16,11 +16,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.moviesremake.R;
 import com.example.android.moviesremake.data.MovieTableContents;
 import com.example.android.moviesremake.utils.Movie;
 import com.squareup.picasso.Picasso;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.example.android.moviesremake.R.id.reviews;
@@ -37,10 +38,10 @@ public class DetailActivity extends AppCompatActivity implements DetailAdapter.F
     private RecyclerView recycler;
 
 
-    @Bind(R.id.overview) TextView textOverview;
-    @Bind(R.id.vote) TextView textVote;
-    @Bind(R.id.release) TextView textRelease;
-    @Bind(R.id.imageView1) ImageView imageView;
+    @BindView(R.id.overview) TextView textOverview;
+    @BindView(R.id.vote) TextView textVote;
+    @BindView(R.id.release) TextView textRelease;
+    @BindView(R.id.imageView1) ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

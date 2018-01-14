@@ -1,4 +1,4 @@
-package com.example.android.moviesremake;
+package com.example.android.moviesremake.details;
 
 /**
  * Created by PepovPC on 7/16/2017.
@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.android.moviesremake.R;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,5 +1,6 @@
 package com.example.android.moviesremake;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -33,6 +34,7 @@ public class MovieLoader implements LoaderManager.LoaderCallbacks<ArrayList<Movi
 
 
 
+    @SuppressLint("StaticFieldLeak")
     @Override
     public Loader<ArrayList<Movie>> onCreateLoader(int id, Bundle args) {
         return new AsyncTaskLoader<ArrayList<Movie>>(context) {

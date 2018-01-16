@@ -1,15 +1,11 @@
 package com.example.android.moviesremake;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.GridLayoutManager;
@@ -18,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -25,6 +22,15 @@ import com.example.android.moviesremake.details.DetailActivity;
 import com.example.android.moviesremake.favorites.FavoriteActivity;
 import com.example.android.moviesremake.settings.SettingsActivity;
 import com.example.android.moviesremake.utils.Movie;
+import com.example.android.moviesremake.utils.MovieJsonParser;
+import com.example.android.moviesremake.utils.NetworkUtils;
+
+import java.net.URL;
+import java.util.ArrayList;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 // maybe create job for updating movies from web
 public class MainActivity extends AppCompatActivity implements
@@ -65,13 +71,7 @@ public class MainActivity extends AppCompatActivity implements
         recycler.setAdapter(mAdapter);
 
 
-        /**
-         * Nasledujuce riadky nahradzuju tento riadok:  new FetchMovieTask().execute();
-         */
-        int loaderId = FORECAST_LOADER_ID;
-        //LoaderManager.LoaderCallbacks<ArrayList<Movie>> callback = MainActivity.this;
-        Bundle bundleForLoader = null;
-        getSupportLoaderManager().initLoader(loaderId, bundleForLoader, new MovieLoader(this, mAdapter));
+        RxAsyncTask(this);
 
         /*
          * Register MainActivity as an OnPreferenceChangedListener to receive a callback when a
@@ -84,25 +84,33 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-    /**
-     * ask for permissions
-     */
-    public boolean isStoragePermissionGranted() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Log.v(TAG, "Permission is granted");
-                return true;
-            } else {
+    public void RxAsyncTask(Context context){
 
-                Log.v(TAG, "Permission is revoked");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-                return false;
+        ArrayList<Movie> movies = null;
+
+        Observable.fromCallable(() -> {
+
+            String locationQuery = NetworkUtils
+                    .getSearchQuery(context);
+            System.out.println(locationQuery);
+            URL weatherRequestUrl = NetworkUtils.buildUrl(locationQuery);
+            try {
+                String jsonWeatherResponse = NetworkUtils
+                        .getResponseFromHttpUrl(weatherRequestUrl);
+                return MovieJsonParser.getMovieDataFromJson(jsonWeatherResponse);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
             }
-        } else { //permission is automatically granted on sdk<23 upon installation
-            Log.v(TAG, "Permission is granted");
-            return true;
-        }
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe((result) -> {
+                    MainActivity.mLoadingIndicator.setVisibility(View.INVISIBLE);
+                    mAdapter.setMoviesData(result);
+                });
+
     }
 
 
@@ -136,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements
         if (id == R.id.action_refresh) {
             //need to set adapter for null and call LoaderManager again
             mAdapter.setMoviesData(null);
-            getSupportLoaderManager().restartLoader(FORECAST_LOADER_ID, null, new MovieLoader(this, mAdapter));
+            RxAsyncTask(this);
             return true;
         }
 
@@ -185,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements
          */
         if (PREFERENCES_HAVE_BEEN_UPDATED) {
             Log.d("", "onStart: preferences were updated");
-            getSupportLoaderManager().restartLoader(FORECAST_LOADER_ID, null, new MovieLoader(this, mAdapter));
+            RxAsyncTask(this);
             PREFERENCES_HAVE_BEEN_UPDATED = false;
         }
     }

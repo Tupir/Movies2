@@ -1,9 +1,7 @@
 package com.example.android.moviesremake.details;
 
 import android.content.ActivityNotFoundException;
-import android.content.ContentValues;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -17,12 +15,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.moviesremake.R;
-import com.example.android.moviesremake.data.MovieTableContents;
+import com.example.android.moviesremake.realm.MovieRealm;
 import com.example.android.moviesremake.utils.Movie;
 import com.squareup.picasso.Picasso;
 
+import java.util.UUID;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.Realm;
 
 import static com.example.android.moviesremake.R.id.reviews;
 import static com.example.android.moviesremake.R.id.trailers;
@@ -36,6 +37,7 @@ public class DetailActivity extends AppCompatActivity implements DetailAdapter.F
     private Movie mForecast;
     private DetailAdapter mAdapter;
     private RecyclerView recycler;
+    private Realm realm;
 
 
     @BindView(R.id.overview) TextView textOverview;
@@ -61,6 +63,8 @@ public class DetailActivity extends AppCompatActivity implements DetailAdapter.F
                 textOverview.setText(mForecast.getOverview());
             }
         }
+
+        realm = Realm.getDefaultInstance();
 
         // nastavenie recyclerview
         recycler = (RecyclerView) findViewById(trailers);
@@ -104,38 +108,31 @@ public class DetailActivity extends AppCompatActivity implements DetailAdapter.F
 
 // maybe code an delete from database after clicking on it again?
     public void insertMovieToDatabase(View view){
-        ContentValues cv = new ContentValues();
 
-        cv.put(MovieTableContents.MovieEntry.COLUMN_IMAGE, mForecast.getImage());
-        cv.put(MovieTableContents.MovieEntry.COLUMN_TITLE, mForecast.getTitle());
-        cv.put(MovieTableContents.MovieEntry.COLUMN_RELEASE, mForecast.getRelease());
-        cv.put(MovieTableContents.MovieEntry.COLUMN_VOTE, mForecast.getVote());
-        cv.put(MovieTableContents.MovieEntry.COLUMN_OVERVIEW, mForecast.getOverview());
-        cv.put(MovieTableContents.MovieEntry.COLUMN_ID, mForecast.getId());
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                MovieRealm task = realm.where(MovieRealm.class).equalTo("image", mForecast.getImage()).findFirst();
+                if(task == null){
+                    task = realm.createObject(MovieRealm.class,  UUID.randomUUID().toString());
+                    task.setImage(mForecast.getImage());
+                }else{
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "Already in favorites!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
 
-        /**
-         * Checking if movie is in database already
-         * I am working here with getContentResolver, this method calls (query,update,delete,insert)
-         *  functions that are implemented in Provider
-         * getContentResolver calls code by URIs
-         */
-        Cursor cursor = this.getContentResolver().query(MovieTableContents.MovieEntry.CONTENT_URI,
-                null,   //new String[] {"image"}
-                MovieTableContents.MovieEntry.COLUMN_IMAGE + " = ? ",
-                new String[]{mForecast.getImage()},
-                null);
+    }
 
-        if(cursor.moveToFirst()) {
-            Toast.makeText(this, "You already marked this movie as favorite!",
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
 
-        // better to use: Using AsyncQueryHandler to Access Content Providers Asynchronously in Android?
-        // database operations should be in it's own thread
-        this.getContentResolver().insert(
-                MovieTableContents.MovieEntry.CONTENT_URI,
-                cv);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close();
     }
 
 

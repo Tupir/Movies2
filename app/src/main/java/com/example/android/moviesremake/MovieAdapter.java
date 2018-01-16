@@ -101,7 +101,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ForecastAdap
                 .error(R.drawable.no_image)
                 .into(forecastAdapterViewHolder.obrazek);
 
-//        String weatherForThisDay = moviesData.get(position).getTitle();
+//        String weatherForThisDay = moviesData.get(position).getImage();
 //        forecastAdapterViewHolder.mWeatherTextView.setText(weatherForThisDay);
 
     }

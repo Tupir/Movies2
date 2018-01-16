@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements
             Toast.makeText(getApplicationContext(), "Connection not available", Toast.LENGTH_SHORT).show();
         }
 
-
         mLoadingIndicator = (ProgressBar) findViewById(R.id.pb_loading_indicator);  // loader
 
         // nastavenie recyclerview
@@ -207,5 +206,9 @@ public class MainActivity extends AppCompatActivity implements
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         PREFERENCES_HAVE_BEEN_UPDATED = true;
     }
+
+
+
+
 
 }

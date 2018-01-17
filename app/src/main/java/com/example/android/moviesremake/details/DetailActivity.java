@@ -29,10 +29,10 @@ import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static com.example.android.moviesremake.R.id.reviews;
 import static com.example.android.moviesremake.R.id.trailers;
@@ -96,24 +96,32 @@ public class DetailActivity extends AppCompatActivity implements DetailAdapter.F
 
         MainActivity.mLoadingIndicator.setVisibility(View.VISIBLE);
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        Call<Pokus> call;
-
+        Observable<Pokus> call;
         call = apiService.getMovieReviews(346364, MainActivity.API_KEY);
 
+        call.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(weatherData -> {
+                    List<MovieRetrofitReview> movies = weatherData.getResultsForReview();
+                    System.out.println("Review sice is IDEEEEEEEEEEEEEEEEEEEE??: " + movies.size());
+                    MainActivity.mLoadingIndicator.setVisibility(View.INVISIBLE);
+                });
 
-        call.enqueue(new Callback<Pokus>() {
-            @Override
-            public void onResponse(Call<Pokus> call, Response<Pokus> response) {
-                List<MovieRetrofitReview> movies = response.body().getResultsForReview();
-                System.out.println("Review sice is IDEEEEEEEEEEEEEEEEEEEE??: " + movies.size());
-                MainActivity.mLoadingIndicator.setVisibility(View.INVISIBLE);
-            }
 
-            @Override
-            public void onFailure(Call<Pokus>call, Throwable t) {
-                MainActivity.mLoadingIndicator.setVisibility(View.INVISIBLE);
-            }
-        });
+
+//        call.enqueue(new Callback<Pokus>() {
+//            @Override
+//            public void onResponse(Call<Pokus> call, Response<Pokus> response) {
+//                List<MovieRetrofitReview> movies = response.body().getResultsForReview();
+//                System.out.println("Review sice is IDEEEEEEEEEEEEEEEEEEEE??: " + movies.size());
+//                MainActivity.mLoadingIndicator.setVisibility(View.INVISIBLE);
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Pokus>call, Throwable t) {
+//                MainActivity.mLoadingIndicator.setVisibility(View.INVISIBLE);
+//            }
+//        });
 
 
 

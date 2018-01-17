@@ -87,6 +87,7 @@ public class DetailActivity extends AppCompatActivity implements DetailAdapter.F
 
         // --------------------------------------------------------------------------
 
+        //http://api.themoviedb.org/3/movie/346364/reviews?api_key=c88f3eabe09958ae472c9cd7e20b38aa
 
         if (MainActivity.API_KEY.isEmpty()) {
             Toast.makeText(getApplicationContext(), "Wrong API key", Toast.LENGTH_LONG).show();

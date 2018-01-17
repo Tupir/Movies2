@@ -21,7 +21,7 @@ import com.example.android.moviesremake.retrofit.ApiClient;
 import com.example.android.moviesremake.retrofit.ApiInterface;
 import com.example.android.moviesremake.retrofit.MovieRetrofit;
 import com.example.android.moviesremake.retrofit.MovieRetrofitReview;
-import com.example.android.moviesremake.retrofit.MoviesResponse;
+import com.example.android.moviesremake.retrofit.Pokus;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -96,31 +96,24 @@ public class DetailActivity extends AppCompatActivity implements DetailAdapter.F
 
         MainActivity.mLoadingIndicator.setVisibility(View.VISIBLE);
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        Call<MoviesResponse.Obycaj> call;
+        Call<Pokus> call;
 
         call = apiService.getMovieReviews(346364, MainActivity.API_KEY);
 
 
-        call.enqueue(new Callback<MoviesResponse.Obycaj>() {
+        call.enqueue(new Callback<Pokus>() {
             @Override
-            public void onResponse(Call<MoviesResponse.Obycaj> call, Response<MoviesResponse.Obycaj> response) {
+            public void onResponse(Call<Pokus> call, Response<Pokus> response) {
                 List<MovieRetrofitReview> movies = response.body().getResultsForReview();
-                System.out.println("Movie sice is: " + movies.size());
+                System.out.println("Review sice is IDEEEEEEEEEEEEEEEEEEEE??: " + movies.size());
                 MainActivity.mLoadingIndicator.setVisibility(View.INVISIBLE);
             }
 
             @Override
-            public void onFailure(Call<MoviesResponse.Obycaj>call, Throwable t) {
+            public void onFailure(Call<Pokus>call, Throwable t) {
                 MainActivity.mLoadingIndicator.setVisibility(View.INVISIBLE);
             }
         });
-
-
-
-
-
-
-
 
 
 

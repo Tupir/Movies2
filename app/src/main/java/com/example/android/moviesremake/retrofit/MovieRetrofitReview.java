@@ -2,9 +2,6 @@ package com.example.android.moviesremake.retrofit;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by PepovPC on 1/16/2018.
  */
@@ -12,35 +9,34 @@ import java.util.List;
 public class MovieRetrofitReview {
 
     @SerializedName("author")
-    private List<String> autorName = new ArrayList<>();
+    private String autorName;
 
-    @SerializedName("content")
-    private List<String> autorComment = new ArrayList<>();
+//    @SerializedName("content")
+//    private List<String> autorComment = new ArrayList<>();
 
 
-    public MovieRetrofitReview(List<String> autorName, List<String> autorComment){
+    public MovieRetrofitReview(String autorName){
         this.autorName = autorName;
-        this.autorComment = autorComment;
+        //this.autorComment = autorComment;
     }
 
 
-    public List<String> getAutorName() {
+    public String getAutorName() {
         return autorName;
     }
 
-    public void setAutorName(List<String> autorName) {
+    public void setAutorName(String autorName) {
         this.autorName = autorName;
     }
 
 
-    public List<String> getAutorComment() {
-        return autorComment;
-    }
-
-    public void setAutorComment(List<String> autorComment) {
-        this.autorComment = autorComment;
-    }
-
+//    public List<String> getAutorComment() {
+//        return autorComment;
+//    }
+//
+//    public void setAutorComment(List<String> autorComment) {
+//        this.autorComment = autorComment;
+//    }
 
 
 }

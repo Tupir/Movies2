@@ -17,5 +17,5 @@ public interface ApiInterface {
     Call<MoviesResponse> getPopularMovies(@Query("api_key") String apiKey);
 
     @GET("movie/{id}/reviews")
-    Call<MoviesResponse.Obycaj> getMovieReviews(@Path("id") int id, @Query("api_key") String apiKey);
+    Call<Pokus> getMovieReviews(@Path("id") int id, @Query("api_key") String apiKey);
 }

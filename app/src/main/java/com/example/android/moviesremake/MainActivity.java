@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements
         call.enqueue(new Callback<MoviesResponse>() {
             @Override
             public void onResponse(Call<MoviesResponse>call, Response<MoviesResponse> response) {
-                List<MovieRetrofit> movies = (List<MovieRetrofit>) response.body().getResults();
+                List<MovieRetrofit> movies = response.body().getResults();
                 System.out.println("Movie sice is: " + movies.size());
                 mLoadingIndicator.setVisibility(View.INVISIBLE);
                 mAdapter.setMoviesData(movies);

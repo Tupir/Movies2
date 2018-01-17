@@ -16,8 +16,6 @@ public class MoviesResponse {
     @SerializedName("results")
     private List<MovieRetrofit> results;
 
-//    @SerializedName("results")
-//    private List<MovieRetrofitReview> resultsReview;
 
     @SerializedName("total_results")
     private int totalResults;
@@ -62,19 +60,6 @@ public class MoviesResponse {
     }
 
 
-
-    public class Obycaj{
-
-
-            @SerializedName("results")
-    private List<MovieRetrofitReview> resultsReview;
-
-        public List<MovieRetrofitReview> getResultsForReview() {
-            return resultsReview;
-        }
-
-
-    }
 
 
 }

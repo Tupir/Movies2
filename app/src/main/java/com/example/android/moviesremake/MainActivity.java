@@ -20,33 +20,31 @@ import android.widget.Toast;
 
 import com.example.android.moviesremake.details.DetailActivity;
 import com.example.android.moviesremake.favorites.FavoriteActivity;
+import com.example.android.moviesremake.retrofit.ApiClient;
+import com.example.android.moviesremake.retrofit.ApiInterface;
+import com.example.android.moviesremake.retrofit.MovieRetrofit;
+import com.example.android.moviesremake.retrofit.MoviesResponse;
 import com.example.android.moviesremake.settings.SettingsActivity;
-import com.example.android.moviesremake.utils.Movie;
-import com.example.android.moviesremake.utils.MovieJsonParser;
-import com.example.android.moviesremake.utils.NetworkUtils;
 
-import java.net.URL;
-import java.util.ArrayList;
+import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-// maybe create job for updating movies from web
+
 public class MainActivity extends AppCompatActivity implements
-        MovieAdapter.ForecastAdapterOnClickHandler,     // recycler view click handler
-//        LoaderManager.LoaderCallbacks<ArrayList<Movie>>,    // AsyncTask
+        MovieAdapter.adapterOnClickHandler,     // recycler view click handler
         SharedPreferences.OnSharedPreferenceChangeListener {     // settings change
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private MovieAdapter mAdapter;
     private RecyclerView recycler;
     public static ProgressBar mLoadingIndicator;
-
-    private static final int FORECAST_LOADER_ID = 0;    // special ID for LoaderManager
-
     // COMPLETED (4) Add a private static boolean flag for preference updates and initialize it to false
     private static boolean PREFERENCES_HAVE_BEEN_UPDATED = false;
+
+    public static String API_KEY = "c88f3eabe09958ae472c9cd7e20b38aa";
 
 
     @Override
@@ -71,7 +69,8 @@ public class MainActivity extends AppCompatActivity implements
         recycler.setAdapter(mAdapter);
 
 
-        RxAsyncTask(this);
+        //RxAsyncTask(this);
+        retrofitApiCall();
 
         /*
          * Register MainActivity as an OnPreferenceChangedListener to receive a callback when a
@@ -84,55 +83,73 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-    public void RxAsyncTask(Context context){
+//    public void RxAsyncTask(Context context){
+//
+//        Observable.fromCallable(() -> {
+//
+//            String locationQuery = NetworkUtils
+//                    .getSearchQuery(context);
+//            System.out.println(locationQuery);
+//            URL weatherRequestUrl = NetworkUtils.buildUrl(locationQuery);
+//            try {
+//                String jsonWeatherResponse = NetworkUtils
+//                        .getResponseFromHttpUrl(weatherRequestUrl);
+//                return MovieJsonParser.getMovieDataFromJson(jsonWeatherResponse);
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                return null;
+//            }
+//        })
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe((result) -> {
+//                    MainActivity.mLoadingIndicator.setVisibility(View.INVISIBLE);
+//                    mAdapter.setMoviesData(result);
+//                });
+//
+//    }
 
-        ArrayList<Movie> movies = null;
 
-        Observable.fromCallable(() -> {
+    public void retrofitApiCall(){
 
-            String locationQuery = NetworkUtils
-                    .getSearchQuery(context);
-            System.out.println(locationQuery);
-            URL weatherRequestUrl = NetworkUtils.buildUrl(locationQuery);
-            try {
-                String jsonWeatherResponse = NetworkUtils
-                        .getResponseFromHttpUrl(weatherRequestUrl);
-                return MovieJsonParser.getMovieDataFromJson(jsonWeatherResponse);
+        if (API_KEY.isEmpty()) {
+            Toast.makeText(getApplicationContext(), "Wrong API key", Toast.LENGTH_LONG).show();
+            return;
+        }
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
+        mLoadingIndicator.setVisibility(View.VISIBLE);
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+        Call<MoviesResponse> call;
+
+        if(ApiClient.getSearchQuery(this).equals("popular")){
+            call = apiService.getPopularMovies(API_KEY);
+        }else{
+            call = apiService.getTopRatedMovies(API_KEY);
+        }
+
+        call.enqueue(new Callback<MoviesResponse>() {
+            @Override
+            public void onResponse(Call<MoviesResponse>call, Response<MoviesResponse> response) {
+                List<MovieRetrofit> movies = (List<MovieRetrofit>) response.body().getResults();
+                System.out.println("Movie sice is: " + movies.size());
+                mLoadingIndicator.setVisibility(View.INVISIBLE);
+                mAdapter.setMoviesData(movies);
             }
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((result) -> {
-                    MainActivity.mLoadingIndicator.setVisibility(View.INVISIBLE);
-                    mAdapter.setMoviesData(result);
-                });
 
-    }
+            @Override
+            public void onFailure(Call<MoviesResponse>call, Throwable t) {
+                mLoadingIndicator.setVisibility(View.INVISIBLE);
+                Log.e(TAG, t.toString());
+            }
+        });
 
-
-    /**
-     * Override metoda z rozhrania, ktore sa nachadza v Adapteri
-     * Urcuje, co sa ma stat po stlaceni na konkretny view
-     */
-    @Override
-    public void onClick(Movie weatherForDay) {
-        Context context = this;
-        Intent intentToStartDetailActivity = new Intent(context, DetailActivity.class);
-        intentToStartDetailActivity.putExtra("movies", weatherForDay);
-        startActivity(intentToStartDetailActivity);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        /* Use AppCompatActivity's method getMenuInflater to get a handle on the menu inflater */
         MenuInflater inflater = getMenuInflater();
-        /* Use the inflater's inflate method to inflate our menu layout to this menu */
         inflater.inflate(R.menu.forecast, menu);
-        /* Return true so that the menu is displayed in the Toolbar */
         return true;
     }
 
@@ -144,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements
         if (id == R.id.action_refresh) {
             //need to set adapter for null and call LoaderManager again
             mAdapter.setMoviesData(null);
-            RxAsyncTask(this);
+            retrofitApiCall();
             return true;
         }
 
@@ -184,21 +201,17 @@ public class MainActivity extends AppCompatActivity implements
         /*
          * If the preferences for location or units have changed since the user was last in
          * MainActivity, perform another query and set the flag to false.
-         *
          * This isn't the ideal solution because there really isn't a need to perform another
          * GET request just to change the units, but this is the simplest solution that gets the
-         * job done for now. Later in this course, we are going to show you more elegant ways to
-         * handle converting the units from celsius to fahrenheit and back without hitting the
-         * network again by keeping a copy of the data in a manageable format.
-         */
+         * job done for now.
+         * */
         if (PREFERENCES_HAVE_BEEN_UPDATED) {
             Log.d("", "onStart: preferences were updated");
-            RxAsyncTask(this);
+            retrofitApiCall();
             PREFERENCES_HAVE_BEEN_UPDATED = false;
         }
     }
 
-    //Override onDestroy and unregister MainActivity as a SharedPreferenceChangedListener
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -215,8 +228,13 @@ public class MainActivity extends AppCompatActivity implements
         PREFERENCES_HAVE_BEEN_UPDATED = true;
     }
 
-
-
+    @Override
+    public void onClick(MovieRetrofit movieRetrofit) {
+        Context context = this;
+        Intent intentToStartDetailActivity = new Intent(context, DetailActivity.class);
+        intentToStartDetailActivity.putExtra("movies", movieRetrofit);
+        startActivity(intentToStartDetailActivity);
+    }
 
 
 }

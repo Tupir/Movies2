@@ -12,27 +12,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.example.android.moviesremake.utils.Movie;
+import com.example.android.moviesremake.retrofit.MovieRetrofit;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
+import java.util.List;
 
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ForecastAdapterViewHolder> {
 
     private static final String TAG = MovieAdapter.class.getSimpleName();
-    private ArrayList<Movie> moviesData;
+    private List<MovieRetrofit> moviesData;
     private Context context;
-    private final ForecastAdapterOnClickHandler mClickHandler;
+    private final adapterOnClickHandler mClickHandler;
 
     /**
      * Rozhranie, ktore urcuje, co sa vykona po kliknuti na konkretny view
      */
-    public interface ForecastAdapterOnClickHandler {
-        void onClick(Movie weatherForDay);
+    public interface adapterOnClickHandler {
+        void onClick(MovieRetrofit movieRetrofit);
     }
 
-    public MovieAdapter(Context context, ForecastAdapterOnClickHandler clickHandler) {
+    public MovieAdapter(Context context, adapterOnClickHandler clickHandler) {
         this.context = context;         // for Picasso
         mClickHandler = clickHandler;   // for Clicking
     }
@@ -56,7 +56,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ForecastAdap
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            Movie movie = moviesData.get(adapterPosition);
+            MovieRetrofit movie = moviesData.get(adapterPosition);
             mClickHandler.onClick(movie);
         }
     }
@@ -93,17 +93,13 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ForecastAdap
      */
     @Override
     public void onBindViewHolder(ForecastAdapterViewHolder forecastAdapterViewHolder, int position) {
+
         String weatherForThisDay = moviesData.get(position).getImage();
-        System.out.println(weatherForThisDay);
         Picasso.with(context)
                 .load(weatherForThisDay)
                 .placeholder(R.drawable.no_image)
                 .error(R.drawable.no_image)
                 .into(forecastAdapterViewHolder.obrazek);
-
-//        String weatherForThisDay = moviesData.get(position).getImage();
-//        forecastAdapterViewHolder.mWeatherTextView.setText(weatherForThisDay);
-
     }
 
     /**
@@ -125,7 +121,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ForecastAdap
      *
      * @param data The new weather data to be displayed.
      */
-    public void setMoviesData(ArrayList<Movie> data) {
+    public void setMoviesData(List<MovieRetrofit> data) {
         moviesData = data;
         notifyDataSetChanged();
     }

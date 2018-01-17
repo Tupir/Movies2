@@ -14,16 +14,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.android.moviesremake.MainActivity;
 import com.example.android.moviesremake.R;
 import com.example.android.moviesremake.realm.MovieRealm;
-import com.example.android.moviesremake.utils.Movie;
+import com.example.android.moviesremake.retrofit.ApiClient;
+import com.example.android.moviesremake.retrofit.ApiInterface;
+import com.example.android.moviesremake.retrofit.MovieRetrofit;
+import com.example.android.moviesremake.retrofit.MovieRetrofitReview;
+import com.example.android.moviesremake.retrofit.MoviesResponse;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
 import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.example.android.moviesremake.R.id.reviews;
 import static com.example.android.moviesremake.R.id.trailers;
@@ -34,7 +43,7 @@ public class DetailActivity extends AppCompatActivity implements DetailAdapter.F
 
     public static final int ID_REVIEW_LOADER2 = 161;
 
-    private Movie mForecast;
+    private MovieRetrofit movie;
     private DetailAdapter mAdapter;
     private RecyclerView recycler;
     private Realm realm;
@@ -50,17 +59,17 @@ public class DetailActivity extends AppCompatActivity implements DetailAdapter.F
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_relative);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        ButterKnife.bind(this); // before setText
+        ButterKnife.bind(this);
 
         Intent intentThatStartedThisActivity = getIntent();
         if (intentThatStartedThisActivity != null) {
             if (intentThatStartedThisActivity.hasExtra("movies")) {
-                mForecast = intentThatStartedThisActivity.getParcelableExtra("movies");
-                setTitle(mForecast.getTitle());
-                Picasso.with(this).load(mForecast.getImage()).into(imageView);
-                textRelease.setText(mForecast.getRelease());
-                textVote.setText(mForecast.getVote()+"/10".toString());
-                textOverview.setText(mForecast.getOverview());
+                movie = intentThatStartedThisActivity.getParcelableExtra("movies");
+                setTitle(movie.getTitle());
+                Picasso.with(this).load(movie.getImage()).into(imageView);
+                textRelease.setText(movie.getRelease());
+                textVote.setText(movie.getVote()+"/10".toString());
+                textOverview.setText(movie.getOverview());
             }
         }
 
@@ -76,8 +85,49 @@ public class DetailActivity extends AppCompatActivity implements DetailAdapter.F
         recycler.setAdapter(mAdapter);
 
 
+        // --------------------------------------------------------------------------
 
-        getSupportLoaderManager().initLoader(ID_TRAILER_LOADER, null, new TrailerAndReviewLoader(this, mAdapter, mForecast.getId()));
+
+        if (MainActivity.API_KEY.isEmpty()) {
+            Toast.makeText(getApplicationContext(), "Wrong API key", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        MainActivity.mLoadingIndicator.setVisibility(View.VISIBLE);
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+        Call<MoviesResponse.Obycaj> call;
+
+        call = apiService.getMovieReviews(346364, MainActivity.API_KEY);
+
+
+        call.enqueue(new Callback<MoviesResponse.Obycaj>() {
+            @Override
+            public void onResponse(Call<MoviesResponse.Obycaj> call, Response<MoviesResponse.Obycaj> response) {
+                List<MovieRetrofitReview> movies = response.body().getResultsForReview();
+                System.out.println("Movie sice is: " + movies.size());
+                MainActivity.mLoadingIndicator.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onFailure(Call<MoviesResponse.Obycaj>call, Throwable t) {
+                MainActivity.mLoadingIndicator.setVisibility(View.INVISIBLE);
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+        //---------------------------------------------------------------------------------------------
+
+
+
+        getSupportLoaderManager().initLoader(ID_TRAILER_LOADER, null, new TrailerAndReviewLoader(this, mAdapter, movie.getId()));
 
         // nastavenie recyclerview
         recycler = (RecyclerView) findViewById(reviews);
@@ -88,7 +138,7 @@ public class DetailActivity extends AppCompatActivity implements DetailAdapter.F
         mAdapter = new DetailAdapter(this, this);
         recycler.setAdapter(mAdapter);
 
-        getSupportLoaderManager().initLoader(ID_REVIEW_LOADER2, null, new TrailerAndReviewLoader(this, mAdapter, mForecast.getId()));
+        getSupportLoaderManager().initLoader(ID_REVIEW_LOADER2, null, new TrailerAndReviewLoader(this, mAdapter, movie.getId()));
         
 
     }
@@ -112,10 +162,10 @@ public class DetailActivity extends AppCompatActivity implements DetailAdapter.F
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                MovieRealm task = realm.where(MovieRealm.class).equalTo("image", mForecast.getImage()).findFirst();
+                MovieRealm task = realm.where(MovieRealm.class).equalTo("image", movie.getImage()).findFirst();
                 if(task == null){
                     task = realm.createObject(MovieRealm.class,  UUID.randomUUID().toString());
-                    task.setImage(mForecast.getImage());
+                    task.setImage(movie.getImage());
                 }else{
                     runOnUiThread(new Runnable() {
                         public void run() {
@@ -144,7 +194,6 @@ public class DetailActivity extends AppCompatActivity implements DetailAdapter.F
         // Always use string resources for UI text. This says something like "Share this photo with"
         String title = (String) getResources().getText(R.string.chooser_title);
         // Create and start the chooser
-
         Intent chooser = Intent.createChooser(intent, title);
 
         try {

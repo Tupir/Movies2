@@ -1,4 +1,4 @@
-package com.example.android.moviesremake.realm;
+package com.example.android.moviesremake.favorites;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import com.example.android.moviesremake.MovieAdapter;
 import com.example.android.moviesremake.R;
+import com.example.android.moviesremake.realm.MovieRealm;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -38,16 +39,13 @@ public class FavoriteRealmAdapter extends RealmRecyclerViewAdapter<MovieRealm, F
     }
 
 
-    public FavoriteRealmAdapter(@Nullable OrderedRealmCollection<MovieRealm> data, boolean autoUpdate, Context context, FavoriteRealmAdapter.ForecastAdapterOnClickHandler clickHandler) {
+    public FavoriteRealmAdapter(@Nullable OrderedRealmCollection<MovieRealm> data, boolean autoUpdate,
+                                Context context, FavoriteRealmAdapter.ForecastAdapterOnClickHandler clickHandler) {
         super(data, autoUpdate);
         this.context = context;         // for Picasso
         mClickHandler = clickHandler;   // for Clicking
         moviesData = data;
     }
-
-
-
-
 
 
     @Override
@@ -69,7 +67,6 @@ public class FavoriteRealmAdapter extends RealmRecyclerViewAdapter<MovieRealm, F
 
 
         String weatherForThisDay = movie.getImage();
-
 
         System.out.println(weatherForThisDay);
         Picasso.with(context)

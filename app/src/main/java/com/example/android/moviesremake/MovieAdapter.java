@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.example.android.moviesremake.retrofit.MovieRetrofit;
+import com.example.android.moviesremake.retrofit.model.MovieRetrofit;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

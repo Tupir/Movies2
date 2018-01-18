@@ -1,4 +1,4 @@
-package com.example.android.moviesremake.retrofit;
+package com.example.android.moviesremake.retrofit.model;
 
 import com.google.gson.annotations.SerializedName;
 

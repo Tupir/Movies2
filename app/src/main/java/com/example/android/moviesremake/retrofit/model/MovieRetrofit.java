@@ -1,4 +1,4 @@
-package com.example.android.moviesremake.retrofit;
+package com.example.android.moviesremake.retrofit.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -24,13 +24,13 @@ public class MovieRetrofit implements Parcelable {
     private String overview;
 
     @SerializedName("vote_average")
-    private Double vote;
+    private String vote;
 
     @SerializedName("release_date")
     private String release;
 
 
-    public MovieRetrofit(String image,int id, String title, String overview, Double vote, String release) {
+    public MovieRetrofit(String image,int id, String title, String overview, String vote, String release) {
         this.image = image;
         this.id = id;
         this.title = title;
@@ -71,11 +71,11 @@ public class MovieRetrofit implements Parcelable {
         return overview;
     }
 
-    public void setVote(Double vote) {
+    public void setVote(String vote) {
         this.vote = vote;
     }
 
-    public Double getVote() {
+    public String getVote() {
         return vote;
     }
 
@@ -99,7 +99,7 @@ public class MovieRetrofit implements Parcelable {
         dest.writeInt(id);
         dest.writeString(title);
         dest.writeString(overview);
-        dest.writeDouble(vote);
+        dest.writeString(vote);
         dest.writeString(release);
     }
 
@@ -120,7 +120,7 @@ public class MovieRetrofit implements Parcelable {
         id = in.readInt();
         title = in.readString();
         overview = in.readString();
-        vote = in.readDouble();
+        vote = in.readString();
         release = in.readString();
     }
 }

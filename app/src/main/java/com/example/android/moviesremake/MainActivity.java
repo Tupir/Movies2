@@ -22,15 +22,15 @@ import com.example.android.moviesremake.details.DetailActivity;
 import com.example.android.moviesremake.favorites.FavoriteActivity;
 import com.example.android.moviesremake.retrofit.ApiClient;
 import com.example.android.moviesremake.retrofit.ApiInterface;
-import com.example.android.moviesremake.retrofit.MovieRetrofit;
-import com.example.android.moviesremake.retrofit.MoviesResponse;
+import com.example.android.moviesremake.retrofit.model.MovieRetrofit;
+import com.example.android.moviesremake.retrofit.response.MoviesResponse;
 import com.example.android.moviesremake.settings.SettingsActivity;
 
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class MainActivity extends AppCompatActivity implements
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements
 
         mLoadingIndicator.setVisibility(View.VISIBLE);
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        Call<MoviesResponse> call;
+        Observable<MoviesResponse> call;
 
         if(ApiClient.getSearchQuery(this).equals("popular")){
             call = apiService.getPopularMovies(API_KEY);
@@ -98,21 +98,15 @@ public class MainActivity extends AppCompatActivity implements
             call = apiService.getTopRatedMovies(API_KEY);
         }
 
-        call.enqueue(new Callback<MoviesResponse>() {
-            @Override
-            public void onResponse(Call<MoviesResponse>call, Response<MoviesResponse> response) {
-                List<MovieRetrofit> movies = response.body().getResults();
-                System.out.println("Movie sice is: " + movies.size());
-                mLoadingIndicator.setVisibility(View.INVISIBLE);
-                mAdapter.setMoviesData(movies);
-            }
 
-            @Override
-            public void onFailure(Call<MoviesResponse>call, Throwable t) {
-                mLoadingIndicator.setVisibility(View.INVISIBLE);
-                Log.e(TAG, t.toString());
-            }
-        });
+        call.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(weatherData -> {
+                    List<MovieRetrofit> movies = weatherData.getResults();
+                    System.out.println("Movie sice is: " + movies.size());
+                    mLoadingIndicator.setVisibility(View.INVISIBLE);
+                    mAdapter.setMoviesData(movies);
+                });
 
     }
 

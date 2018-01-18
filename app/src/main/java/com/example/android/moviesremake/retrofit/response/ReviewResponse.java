@@ -1,5 +1,6 @@
-package com.example.android.moviesremake.retrofit;
+package com.example.android.moviesremake.retrofit.response;
 
+import com.example.android.moviesremake.retrofit.model.MovieRetrofitReview;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;

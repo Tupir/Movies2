@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,26 +13,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.moviesremake.MainActivity;
 import com.example.android.moviesremake.R;
 import com.example.android.moviesremake.realm.MovieRealm;
-import com.example.android.moviesremake.retrofit.ApiClient;
-import com.example.android.moviesremake.retrofit.ApiInterface;
-import com.example.android.moviesremake.retrofit.MovieRetrofit;
-import com.example.android.moviesremake.retrofit.MovieRetrofitReview;
-import com.example.android.moviesremake.retrofit.MovieRetrofitTrailer;
-import com.example.android.moviesremake.retrofit.ReviewResponse;
-import com.example.android.moviesremake.retrofit.TrailerResponse;
+import com.example.android.moviesremake.retrofit.model.MovieRetrofit;
+import com.example.android.moviesremake.utils.HelperRxClass;
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
 import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import io.realm.Realm;
 
 import static com.example.android.moviesremake.R.id.reviews;
@@ -41,13 +30,10 @@ import static com.example.android.moviesremake.R.id.trailers;
 
 public class DetailActivity extends AppCompatActivity implements DetailAdapter.ForecastAdapterOnClickHandler{
 
-    public static final int ID_TRAILER_LOADER = 163;
-
-    public static final int ID_REVIEW_LOADER2 = 161;
-
     private MovieRetrofit movie;
     private DetailAdapter mAdapter;
     private RecyclerView recycler;
+    private RecyclerView recycler2;
     private Realm realm;
 
 
@@ -79,67 +65,12 @@ public class DetailActivity extends AppCompatActivity implements DetailAdapter.F
 
         //http://api.themoviedb.org/3/movie/346364/reviews?api_key=c88f3eabe09958ae472c9cd7e20b38aa
 
-        setReviews();
-
-    }
-
-    public void setReviews(){
 
         recycler = (RecyclerView) findViewById(reviews);
-        RecyclerView.LayoutManager layoutManager2 = new LinearLayoutManager(this);
-        recycler.setLayoutManager(layoutManager2);
-        recycler.setHasFixedSize(true);
+        recycler2 = (RecyclerView) findViewById(trailers);
+        HelperRxClass hp = new HelperRxClass(movie.getId(), this, mAdapter, recycler, recycler2, this);
+        hp.setReviews();
 
-        mAdapter = new DetailAdapter(this, this);
-        recycler.setAdapter(mAdapter);
-
-        if (MainActivity.API_KEY.isEmpty()) {
-            Toast.makeText(getApplicationContext(), "Wrong API key", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        MainActivity.mLoadingIndicator.setVisibility(View.VISIBLE);
-        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        Observable<ReviewResponse> call;
-        call = apiService.getMovieReviews(movie.getId(), MainActivity.API_KEY);
-        call.subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(weatherData -> {
-                    List<MovieRetrofitReview> movies = weatherData.getResultsForReview();
-                    System.out.println("Review size is: " + movies.size());
-                    MainActivity.mLoadingIndicator.setVisibility(View.INVISIBLE);
-                    mAdapter.setReviewData(movies);
-                    setTrailers();
-                });
-    }
-
-    public void setTrailers(){
-
-        recycler = (RecyclerView) findViewById(trailers);
-        RecyclerView.LayoutManager layoutManager2 = new LinearLayoutManager(this);
-        recycler.setLayoutManager(layoutManager2);
-        recycler.setHasFixedSize(true);
-
-        mAdapter = new DetailAdapter(this, this);
-        recycler.setAdapter(mAdapter);
-
-        if (MainActivity.API_KEY.isEmpty()) {
-            Toast.makeText(getApplicationContext(), "Wrong API key", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        MainActivity.mLoadingIndicator.setVisibility(View.VISIBLE);
-        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        Observable<TrailerResponse> call;
-        call = apiService.getMovieTrailers(movie.getId(), MainActivity.API_KEY);
-        call.subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(weatherData -> {
-                    List<MovieRetrofitTrailer> movies = weatherData.getResultsForTrailer();
-                    System.out.println("Trailer size is: " + movies.size());
-                    MainActivity.mLoadingIndicator.setVisibility(View.INVISIBLE);
-                    mAdapter.setTrailerData(movies);
-                });
     }
 
 
@@ -165,6 +96,10 @@ public class DetailActivity extends AppCompatActivity implements DetailAdapter.F
                 if(task == null){
                     task = realm.createObject(MovieRealm.class,  UUID.randomUUID().toString());
                     task.setImage(movie.getImage());
+                    task.setMovieID(movie.getId());
+                    task.setOverview(movie.getOverview());
+                    task.setRelease(movie.getRelease());
+                    task.setVote(movie.getVote());
                 }else{
                     runOnUiThread(new Runnable() {
                         public void run() {

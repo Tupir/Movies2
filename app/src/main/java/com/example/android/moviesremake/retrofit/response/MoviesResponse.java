@@ -1,5 +1,6 @@
-package com.example.android.moviesremake.retrofit;
+package com.example.android.moviesremake.retrofit.response;
 
+import com.example.android.moviesremake.retrofit.model.MovieRetrofit;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -35,9 +36,6 @@ public class MoviesResponse {
         return results;
     }
 
-//    public List<MovieRetrofitReview> getResultsForReview() {
-//        return resultsReview;
-//    }
 
     public void setResults(List<MovieRetrofit> results) {
         this.results = results;

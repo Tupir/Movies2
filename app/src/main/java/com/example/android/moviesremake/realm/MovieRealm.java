@@ -15,6 +15,10 @@ public class MovieRealm extends RealmObject {
     private String id;
 
     private String image;
+    private int movieID;
+    private String release;
+    private String overview;
+    private String vote;
 
 
     public String getId() {
@@ -33,4 +37,35 @@ public class MovieRealm extends RealmObject {
         this.image = image;
     }
 
+    public int getMovieID() {
+        return movieID;
+    }
+
+    public void setMovieID(int movieID) {
+        this.movieID = movieID;
+    }
+
+    public String getRelease() {
+        return release;
+    }
+
+    public void setRelease(String release) {
+        this.release = release;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
+    }
+
+    public String getVote() {
+        return vote;
+    }
+
+    public void setVote(String vote) {
+        this.vote = vote;
+    }
 }

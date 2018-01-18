@@ -34,10 +34,7 @@
             android:name=".details.FavoriteDetailActivity"
             android:parentActivityName=".favorites.FavoriteActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"/>
-        <provider
-            android:authorities="@string/content_authority"
-            android:name=".data.MovieProvider"
-            android:exported="false"/>
+
     </application>
 
 </manifest>

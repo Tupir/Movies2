@@ -14,20 +14,17 @@ import android.widget.ProgressBar;
 
 import com.example.android.moviesremake.R;
 import com.example.android.moviesremake.details.FavoriteDetailActivity;
-import com.example.android.moviesremake.realm.FavoriteRealmAdapter;
 import com.example.android.moviesremake.realm.MovieRealm;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
 
 public class FavoriteActivity extends AppCompatActivity implements
-        FavoriteRealmAdapter.ForecastAdapterOnClickHandler    // recycler view click handler
-{
+        FavoriteRealmAdapter.ForecastAdapterOnClickHandler {
 
 
     private RecyclerView recycler;
     public static ProgressBar mLoadingIndicator;
-
 
     private Realm realm;
     FavoriteRealmAdapter adapter;
@@ -93,12 +90,8 @@ public class FavoriteActivity extends AppCompatActivity implements
     public void onClick(MovieRealm movieRealm) {
         Context context = this;
         Intent intentToStartDetailActivity = new Intent(context, FavoriteDetailActivity.class);
-
-//        Uri forMovieClicked = MovieTableContents.MovieEntry.buildOneMovieUri(image);
-//        intentToStartDetailActivity.setData(forMovieClicked);
-//        intentToStartDetailActivity.putExtra("id", image);
-
-
+        int x = movieRealm.getMovieID();
+        intentToStartDetailActivity.putExtra("id", x);
 
         startActivity(intentToStartDetailActivity);
     }

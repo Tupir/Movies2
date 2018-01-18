@@ -13,8 +13,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.android.moviesremake.R;
-import com.example.android.moviesremake.retrofit.MovieRetrofitReview;
-import com.example.android.moviesremake.retrofit.MovieRetrofitTrailer;
+import com.example.android.moviesremake.retrofit.model.MovieRetrofitReview;
+import com.example.android.moviesremake.retrofit.model.MovieRetrofitTrailer;
 
 import java.util.ArrayList;
 import java.util.List;

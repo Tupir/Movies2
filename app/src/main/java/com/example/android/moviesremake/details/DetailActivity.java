@@ -21,7 +21,9 @@ import com.example.android.moviesremake.retrofit.ApiClient;
 import com.example.android.moviesremake.retrofit.ApiInterface;
 import com.example.android.moviesremake.retrofit.MovieRetrofit;
 import com.example.android.moviesremake.retrofit.MovieRetrofitReview;
-import com.example.android.moviesremake.retrofit.Pokus;
+import com.example.android.moviesremake.retrofit.MovieRetrofitTrailer;
+import com.example.android.moviesremake.retrofit.ReviewResponse;
+import com.example.android.moviesremake.retrofit.TrailerResponse;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -75,63 +77,14 @@ public class DetailActivity extends AppCompatActivity implements DetailAdapter.F
 
         realm = Realm.getDefaultInstance();
 
-        // nastavenie recyclerview
-        recycler = (RecyclerView) findViewById(trailers);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recycler.setLayoutManager(layoutManager);
-        recycler.setHasFixedSize(true);
-
-        mAdapter = new DetailAdapter(this, this);
-        recycler.setAdapter(mAdapter);
-
-
-        // --------------------------------------------------------------------------
-
         //http://api.themoviedb.org/3/movie/346364/reviews?api_key=c88f3eabe09958ae472c9cd7e20b38aa
 
-        if (MainActivity.API_KEY.isEmpty()) {
-            Toast.makeText(getApplicationContext(), "Wrong API key", Toast.LENGTH_LONG).show();
-            return;
-        }
+        setReviews();
 
-        MainActivity.mLoadingIndicator.setVisibility(View.VISIBLE);
-        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
-        Observable<Pokus> call;
-        call = apiService.getMovieReviews(346364, MainActivity.API_KEY);
+    }
 
-        call.subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(weatherData -> {
-                    List<MovieRetrofitReview> movies = weatherData.getResultsForReview();
-                    System.out.println("Review sice is IDEEEEEEEEEEEEEEEEEEEE??: " + movies.size());
-                    MainActivity.mLoadingIndicator.setVisibility(View.INVISIBLE);
-                });
+    public void setReviews(){
 
-
-
-//        call.enqueue(new Callback<Pokus>() {
-//            @Override
-//            public void onResponse(Call<Pokus> call, Response<Pokus> response) {
-//                List<MovieRetrofitReview> movies = response.body().getResultsForReview();
-//                System.out.println("Review sice is IDEEEEEEEEEEEEEEEEEEEE??: " + movies.size());
-//                MainActivity.mLoadingIndicator.setVisibility(View.INVISIBLE);
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Pokus>call, Throwable t) {
-//                MainActivity.mLoadingIndicator.setVisibility(View.INVISIBLE);
-//            }
-//        });
-
-
-
-        //---------------------------------------------------------------------------------------------
-
-
-
-        getSupportLoaderManager().initLoader(ID_TRAILER_LOADER, null, new TrailerAndReviewLoader(this, mAdapter, movie.getId()));
-
-        // nastavenie recyclerview
         recycler = (RecyclerView) findViewById(reviews);
         RecyclerView.LayoutManager layoutManager2 = new LinearLayoutManager(this);
         recycler.setLayoutManager(layoutManager2);
@@ -140,9 +93,53 @@ public class DetailActivity extends AppCompatActivity implements DetailAdapter.F
         mAdapter = new DetailAdapter(this, this);
         recycler.setAdapter(mAdapter);
 
-        getSupportLoaderManager().initLoader(ID_REVIEW_LOADER2, null, new TrailerAndReviewLoader(this, mAdapter, movie.getId()));
-        
+        if (MainActivity.API_KEY.isEmpty()) {
+            Toast.makeText(getApplicationContext(), "Wrong API key", Toast.LENGTH_LONG).show();
+            return;
+        }
 
+        MainActivity.mLoadingIndicator.setVisibility(View.VISIBLE);
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+        Observable<ReviewResponse> call;
+        call = apiService.getMovieReviews(movie.getId(), MainActivity.API_KEY);
+        call.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(weatherData -> {
+                    List<MovieRetrofitReview> movies = weatherData.getResultsForReview();
+                    System.out.println("Review size is: " + movies.size());
+                    MainActivity.mLoadingIndicator.setVisibility(View.INVISIBLE);
+                    mAdapter.setReviewData(movies);
+                    setTrailers();
+                });
+    }
+
+    public void setTrailers(){
+
+        recycler = (RecyclerView) findViewById(trailers);
+        RecyclerView.LayoutManager layoutManager2 = new LinearLayoutManager(this);
+        recycler.setLayoutManager(layoutManager2);
+        recycler.setHasFixedSize(true);
+
+        mAdapter = new DetailAdapter(this, this);
+        recycler.setAdapter(mAdapter);
+
+        if (MainActivity.API_KEY.isEmpty()) {
+            Toast.makeText(getApplicationContext(), "Wrong API key", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        MainActivity.mLoadingIndicator.setVisibility(View.VISIBLE);
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+        Observable<TrailerResponse> call;
+        call = apiService.getMovieTrailers(movie.getId(), MainActivity.API_KEY);
+        call.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(weatherData -> {
+                    List<MovieRetrofitTrailer> movies = weatherData.getResultsForTrailer();
+                    System.out.println("Trailer size is: " + movies.size());
+                    MainActivity.mLoadingIndicator.setVisibility(View.INVISIBLE);
+                    mAdapter.setTrailerData(movies);
+                });
     }
 
 

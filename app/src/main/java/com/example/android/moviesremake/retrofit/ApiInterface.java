@@ -18,5 +18,8 @@ public interface ApiInterface {
     Call<MoviesResponse> getPopularMovies(@Query("api_key") String apiKey);
 
     @GET("movie/{id}/reviews")
-    Observable<Pokus> getMovieReviews(@Path("id") int id, @Query("api_key") String apiKey);
+    Observable<ReviewResponse> getMovieReviews(@Path("id") int id, @Query("api_key") String apiKey);
+
+    @GET("movie/{id}/trailers")
+    Observable<TrailerResponse> getMovieTrailers(@Path("id") int id, @Query("api_key") String apiKey);
 }

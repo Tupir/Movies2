@@ -108,10 +108,10 @@ public class TrailerAndReviewLoader implements LoaderManager.LoaderCallbacks<Lis
             return;
         }
 
-        if(loader.getId()== DetailActivity.ID_TRAILER_LOADER)
-            mAdapter.setTrailerData(data);
-        else
-            mAdapter1.setTrailerData(data);
+//        if(loader.getId()== DetailActivity.ID_TRAILER_LOADER)
+//            mAdapter.setTrailerData(data);
+//        else
+//            mAdapter1.setTrailerData(data);
     }
 
     @Override

@@ -11,13 +11,13 @@ public class MovieRetrofitReview {
     @SerializedName("author")
     private String autorName;
 
-//    @SerializedName("content")
-//    private List<String> autorComment = new ArrayList<>();
+    @SerializedName("content")
+    private String autorComment;
 
 
-    public MovieRetrofitReview(String autorName){
+    public MovieRetrofitReview(String autorName, String autorComment){
         this.autorName = autorName;
-        //this.autorComment = autorComment;
+        this.autorComment = autorComment;
     }
 
 
@@ -29,14 +29,13 @@ public class MovieRetrofitReview {
         this.autorName = autorName;
     }
 
+    public String getAutorComment() {
+        return autorComment;
+    }
 
-//    public List<String> getAutorComment() {
-//        return autorComment;
-//    }
-//
-//    public void setAutorComment(List<String> autorComment) {
-//        this.autorComment = autorComment;
-//    }
+    public void setAutorComment(String autorName) {
+        this.autorComment = autorComment;
+    }
 
 
 }

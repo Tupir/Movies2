@@ -8,7 +8,7 @@ import java.util.List;
  * Created by PepovPC on 1/17/2018.
  */
 
-public class Pokus{
+public class ReviewResponse {
 
 
     @SerializedName("results")

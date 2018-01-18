@@ -68,8 +68,6 @@ public class MainActivity extends AppCompatActivity implements
         mAdapter = new MovieAdapter(getBaseContext(), this);
         recycler.setAdapter(mAdapter);
 
-
-        //RxAsyncTask(this);
         retrofitApiCall();
 
         /*
@@ -81,34 +79,6 @@ public class MainActivity extends AppCompatActivity implements
                 .registerOnSharedPreferenceChangeListener(this);
 
     }
-
-
-//    public void RxAsyncTask(Context context){
-//
-//        Observable.fromCallable(() -> {
-//
-//            String locationQuery = NetworkUtils
-//                    .getSearchQuery(context);
-//            System.out.println(locationQuery);
-//            URL weatherRequestUrl = NetworkUtils.buildUrl(locationQuery);
-//            try {
-//                String jsonWeatherResponse = NetworkUtils
-//                        .getResponseFromHttpUrl(weatherRequestUrl);
-//                return MovieJsonParser.getMovieDataFromJson(jsonWeatherResponse);
-//
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                return null;
-//            }
-//        })
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe((result) -> {
-//                    MainActivity.mLoadingIndicator.setVisibility(View.INVISIBLE);
-//                    mAdapter.setMoviesData(result);
-//                });
-//
-//    }
 
 
     public void retrofitApiCall(){

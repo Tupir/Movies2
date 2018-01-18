@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.android.moviesremake.R;
+import com.example.android.moviesremake.retrofit.MovieRetrofitReview;
+import com.example.android.moviesremake.retrofit.MovieRetrofitTrailer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +23,12 @@ import java.util.List;
 public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final String TAG = DetailAdapter.class.getSimpleName();
-    private ArrayList<String> trailers;
     private Context context;
     private final ForecastAdapterOnClickHandler mClickHandler;
     private static final int VIEW_TRAILERS = 0;
     private static final int VIEW_REVIEWS = 1;
-    List<List<String>> reviews = new ArrayList<>();
+    private List<MovieRetrofitReview> reviews = new ArrayList<>();
+    private List<MovieRetrofitTrailer> trailers = new ArrayList<>();
 
 
     public interface ForecastAdapterOnClickHandler {
@@ -52,7 +54,7 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            String url = reviews.get(adapterPosition).get(0);
+            String url = trailers.get(adapterPosition).getYoutubeSource();
             mClickHandler.onClick(url);
         }
     }
@@ -94,14 +96,13 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         int viewType = getItemViewType(position);
         switch(viewType){
             case VIEW_TRAILERS:
-                trailerViewHolder trailerViewHolder = (DetailAdapter.trailerViewHolder) holder;
-                //trailerViewHolder.trailer.setText(trailers.get(position));
-                trailerViewHolder.trailer.setText("Trailer "+Integer.toString(++position));
+                ((trailerViewHolder) holder).trailer.setText(trailers.get(position).getTrailerName());
+                String str = trailers.get(position).getTrailerName();
+                System.out.println(str);
                 break;
             case VIEW_REVIEWS:
-                reviewViewHolder reviewViewHolder = (DetailAdapter.reviewViewHolder) holder;
-                reviewViewHolder.name.setText(reviews.get(position).get(0)+": ");
-                reviewViewHolder.text.setText(reviews.get(position).get(1));
+                ((reviewViewHolder) holder).name.setText(reviews.get(position).getAutorName());
+                ((reviewViewHolder) holder).text.setText(reviews.get(position).getAutorComment());
 
                 break;
             default:
@@ -113,7 +114,7 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemViewType(int position) {
-        if(reviews.get(position).size()==1)
+        if(reviews.size() == 0 && trailers.size() != 0)
             return VIEW_TRAILERS;
         else
             return VIEW_REVIEWS;
@@ -122,16 +123,23 @@ public class DetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemCount() {
-        if (null == reviews) return 0;
-        return reviews.size();
+        if (reviews == null || reviews.size() == 0)
+            return trailers.size();
+        else
+            return reviews.size();
     }
 
 
-    public void setTrailerData(List<List<String>> data) {
+    public void setReviewData(List<MovieRetrofitReview> data) {
         if(data==null) {return;}
         reviews = data;
         notifyDataSetChanged();
     }
 
+    public void setTrailerData(List<MovieRetrofitTrailer> data) {
+        if(data==null) {return;}
+        trailers = data;
+        notifyDataSetChanged();
+    }
 
 }

@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(weatherData -> {
                     List<MovieRetrofit> movies = weatherData.getResults();
-                    System.out.println("Movie sice is: " + movies.size());
+                    System.out.println("Movie size is: " + movies.size());
                     mLoadingIndicator.setVisibility(View.INVISIBLE);
                     mAdapter.setMoviesData(movies);
                 });
@@ -196,6 +196,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onClick(MovieRetrofit movieRetrofit) {
         Context context = this;
         Intent intentToStartDetailActivity = new Intent(context, DetailActivity.class);
+        String str = movieRetrofit.getImage();
         intentToStartDetailActivity.putExtra("movies", movieRetrofit);
         startActivity(intentToStartDetailActivity);
     }

@@ -57,7 +57,7 @@ public class HelperRxClass {
         }
 
         MainActivity.mLoadingIndicator.setVisibility(View.VISIBLE);
-        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+        ApiInterface apiService = ApiClient.INSTANCE.getClient().create(ApiInterface.class);
         Observable<ReviewResponse> call;
         call = apiService.getMovieReviews(id, MainActivity.API_KEY);
         call.subscribeOn(Schedulers.newThread())
@@ -88,7 +88,7 @@ public class HelperRxClass {
         }
 
         MainActivity.mLoadingIndicator.setVisibility(View.VISIBLE);
-        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+        ApiInterface apiService = ApiClient.INSTANCE.getClient().create(ApiInterface.class);
         Observable<TrailerResponse> call;
         call = apiService.getMovieTrailers(id, MainActivity.API_KEY);
         call.subscribeOn(Schedulers.newThread())

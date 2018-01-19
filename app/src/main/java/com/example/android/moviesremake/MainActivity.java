@@ -89,10 +89,10 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         mLoadingIndicator.setVisibility(View.VISIBLE);
-        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+        ApiInterface apiService = ApiClient.INSTANCE.getClient().create(ApiInterface.class);
         Observable<MoviesResponse> call;
 
-        if(ApiClient.getSearchQuery(this).equals("popular")){
+        if(ApiClient.INSTANCE.getSearchQuery(this).equals("popular")){
             call = apiService.getPopularMovies(API_KEY);
         }else{
             call = apiService.getTopRatedMovies(API_KEY);

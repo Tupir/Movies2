@@ -4,4 +4,5 @@
 - view movies, use settings to set what to view (popular/favorite)
 - detail of movie
 - add favorites to database
-- check for comments from others and trailers
+- check for comments from others and view trailers
+- used Realm, Retrofit, Rx, Kotlin
